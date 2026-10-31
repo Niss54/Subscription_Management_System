@@ -266,3 +266,23 @@ class BillingRunResult(BaseModel):
     skipped_count: int
     errors: List[str] = []
 
+
+
+# ─────────────── PAYMENT SCHEMAS ───────────────
+
+class PaymentCreate(BaseModel):
+    invoice_id: str
+    payment_method: PaymentMethodEnum
+    amount: Decimal
+    reference_note: Optional[str] = None
+
+class PaymentOut(BaseModel):
+    id: str
+    invoice_id: str
+    payment_method: PaymentMethodEnum
+    amount: Decimal
+    payment_date: datetime
+    reference_note: Optional[str] = None
+    recorded_by: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
