@@ -47,7 +47,7 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">Executive Financial Dashboard</h1>
-          <p className="text-sm text-slate-400">Live analytics normalized across recurring frequencies with <2s SLA guarantee.</p>
+          <p className="text-sm text-slate-400">Live analytics normalized across recurring frequencies with &lt;2s SLA guarantee.</p>
         </div>
         <div className="flex items-center space-x-3">
           <div className="text-xs font-mono px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-sky-400 flex items-center space-x-2">

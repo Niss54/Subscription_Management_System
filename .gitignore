@@ -37,3 +37,8 @@ temp_screenshots/
 
 # VS Code / IDE settings
 .vscode/
+
+frontend/node_modules/
+.next/
+frontend/.next/
+*.tsbuildinfo
