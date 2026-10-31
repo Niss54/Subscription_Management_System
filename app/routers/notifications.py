@@ -122,3 +122,4 @@ def trigger_overdue_blast(
         body_message="Your invoice is overdue. Please settle your outstanding balance via the portal."
     )
     return send_bulk_notification(payload=req, db=db, current_user=current_user)
+
