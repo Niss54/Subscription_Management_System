@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.database import engine, Base, SessionLocal
 from app.models import User, UserRole
 from app.auth import get_password_hash
-from app.routers import auth, products, plans, quotation_templates, subscriptions, discounts, invoices, payments, dashboard
+from app.routers import auth, products, plans, quotation_templates, subscriptions, discounts, invoices, payments, dashboard, notifications
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -63,6 +63,7 @@ app.include_router(discounts.router)
 app.include_router(invoices.router)
 app.include_router(payments.router)
 app.include_router(dashboard.router)
+app.include_router(notifications.router)
 
 # ─── Static Web Portal ───
 static_dir = os.path.join(os.path.dirname(__file__), "static")

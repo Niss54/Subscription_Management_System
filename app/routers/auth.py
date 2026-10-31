@@ -153,3 +153,41 @@ def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db))
 @router.get("/me", response_model=UserOut)
 def get_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+
+# ─────────────── GOOGLE OAUTH / SUPABASE INTEGRATION ───────────────
+
+from app.schemas import GoogleOAuthCallback
+
+
+@router.post("/google-callback", response_model=Token)
+def google_auth_callback(payload: GoogleOAuthCallback, db: Session = Depends(get_db)):
+    """
+    Seamless single sign-on exchange with Supabase Google OAuth.
+    If user does not exist, registers them automatically as Customer.
+    Returns standard Brightloop JWT access token.
+    """
+    user = db.query(User).filter(User.email == payload.email).first()
+    if not user:
+        random_pwd = secrets.token_urlsafe(24) + "A1!"
+        user = User(
+            email=payload.email,
+            password_hash=get_password_hash(random_pwd),
+            full_name=payload.full_name or "Google Authenticated User",
+            role=UserRole.customer,
+            is_active=True
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    token = create_access_token({"sub": str(user.id), "role": user.role.value, "email": user.email})
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "id": str(user.id),
+        "user_id": str(user.id),
+        "email": user.email,
+        "role": user.role.value,
+        "full_name": user.full_name
+    }
