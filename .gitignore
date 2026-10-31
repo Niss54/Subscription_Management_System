@@ -9,6 +9,10 @@ plugins/
 *.agent
 .gravitas/
 
+# Database & Test files
+*.db
+.pytest_cache/
+
 # Python / Node caches
 __pycache__/
 *.py[cod]
