@@ -555,8 +555,8 @@
     }
 
     // Auto Login as Admin if token not present
-    async function ensureAdminToken() {
-      if (authToken) return authToken;
+    async function ensureAdminToken(force = false) {
+      if (authToken && !force) return authToken;
       try {
         const res = await fetch('/auth/login', {
           method: 'POST',
@@ -571,6 +571,9 @@
           authToken = data.access_token;
           localStorage.setItem('bt_token', authToken);
           return authToken;
+        } else {
+          localStorage.removeItem('bt_token');
+          authToken = '';
         }
       } catch (err) {
         console.warn('Admin token error:', err);
@@ -860,7 +863,7 @@
 
         // Step 2: Variant Surcharge
         updateStep(2, 'running', 'Creating product with brand variant...', 'Testing...');
-        const token = await ensureAdminToken();
+        const token = await ensureAdminToken(true);
         const pRes = await fetch('/products', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },

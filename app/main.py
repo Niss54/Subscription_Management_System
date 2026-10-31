@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
             )
             db.add(default_admin)
             db.commit()
-            print("🚀 Seeded default admin: admin@brightloop.com / Admin@Brightloop2026!")
+            print("[INFO] Seeded default admin: admin@brightloop.com / Admin@Brightloop2026!")
     finally:
         db.close()
 

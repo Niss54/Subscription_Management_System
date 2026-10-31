@@ -192,6 +192,7 @@ def print_invoice(
     return HTMLResponse(content=html)
 
 @router.post("/trigger-billing-run", response_model=BillingRunResult)
+@router.post("/run-billing-cycle", response_model=BillingRunResult)
 def trigger_billing_run(
     target_date: Optional[date] = None,
     db: Session = Depends(get_db),
