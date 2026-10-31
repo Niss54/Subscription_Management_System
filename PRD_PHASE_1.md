@@ -1,163 +1,232 @@
 # 🚀 PRD PHASE 1: System Foundation, Identity, Catalog & Billing Plans
-## Brightloop Software Subscription Billing Platform (Hackathon Winning Blueprint)
+## Brightloop Software Subscription Billing Platform (Podium Winner Blueprint)
 
-> **Document Version:** 2.0.0 (Next.js 15 + Supabase Architecture)  
+> **Document Version:** 3.0.0 (Judge-Ready Masterclass Edition)  
 > **Engineering Mode:** GRAVITAS Invariant-Enforced Implementation  
-> **Tech Stack:** **Next.js 15 (App Router, React 19, TypeScript)** + **Supabase (PostgreSQL 17, RLS, Auth)** + **Tailwind CSS v4** + **Framer Motion / GSAP**  
-> **Design Aesthetic:** Premium Obsidian Dark (`#090a0f`) & Crisp Porcelain White (`#ffffff`), Electric Sky Blue Accents (`#0ea5e9` / `#38bdf8`), Tabular Figures, Micro-Glow Cards  
-> **Target SLA:** 100% Functional Compliance with Brightloop Problem Statement  
-> **Phase Scope:** Core Setup, Identity & RBAC, Product Catalog, Brand Variants (+560 Surcharge), Billing Plans & Policies  
+> **Tech Stack:** **Next.js 15 (App Router, React 19, TypeScript)** + **Supabase (PostgreSQL 17, Row-Level Security, Auth)** + **Tailwind CSS v4** + **GSAP (Timelines & Tickers)** + **Three.js (Ambient Canvas)**  
+> **Design Aesthetic:** Linear & Stripe Inspired: Obsidian Carbon (`#090a0f`) & Crisp Porcelain White (`#ffffff`), Electric Light Sky Blue Glow Buttons (`#38bdf8` / `#0ea5e9`), Tabular Financial Figures  
+> **Target SLA:** 100% Functional Compliance with Brightloop Problem Statement | Sub-2s Response Time  
+> **Phase Scope:** Next.js + Supabase Foundation, Identity & 3-Tier RBAC, Password Regex & Token Reset, Product Catalog & Brand Variants (+560 Markup), Billing Plans with Policy Controls  
 
 ---
 
-## 1. Executive Context & Modern Architecture
+## 1. Executive Context & Hackathon Winning Architecture
 
-Phase 1 establishes the production infrastructure combining **Next.js 15** for full-stack performance with **Supabase** for enterprise-grade PostgreSQL with Row-Level Security (RLS). 
+Phase 1 lays the bedrock of an enterprise-grade platform built to dominate an evaluation across 400 competing teams. Rather than a fragile template or a generic AI toy, this architecture combines **Next.js 15** for blazingly fast full-stack rendering with **Supabase** for managed PostgreSQL, strict Row-Level Security (RLS), and zero-data-loss decimal transactions.
 
-### 1.1 Technology Architecture Matrix
-| Layer | Technology | Rationale & Advantage |
-| :--- | :--- | :--- |
-| **Frontend Framework** | **Next.js 15 (App Router)** | Server Components for instant load, Server Actions for transactional mutations, Client Components for interactive states. |
-| **Database & Auth** | **Supabase (PostgreSQL 17)** | ACID compliance, strict `NUMERIC(16, 4)` decimals, Row Level Security (RLS), real-time subscriptions, connection pooling via Supabase pgBouncer. |
-| **Styling & Design System**| **Tailwind CSS + Radix UI** | Dark mode (`#090a0f` matte carbon), light mode (`#ffffff`), electric blue buttons (`#0ea5e9`), zero generic template feel. |
-| **Animation Engine** | **GSAP / Framer Motion** | Smooth drawer transitions, spotlight card micro-interactions, spring physics for modals. |
-| **Data Access Layer** | **`@supabase/ssr` + TypeScript** | End-to-end typed schema definitions, secure server-side session cookies. |
-
----
-
-## 2. Entity Relationship Diagram (Phase 1 Sub-schema on Supabase)
-
-```mermaid
-erDiagram
-    PROFILES ||--o{ PASSWORD_RESET_TOKENS : "requests"
-    PROFILES {
-        uuid id PK "Matches auth.users.id"
-        string email UK
-        string role "admin | staff | customer"
-        string full_name
-        boolean is_active
-        datetime created_at
-    }
-
-    PASSWORD_RESET_TOKENS {
-        uuid id PK
-        uuid user_id FK
-        string token_hash "SHA256"
-        datetime expires_at "15-minute window"
-        boolean used "Single-use flag"
-    }
-
-    PRODUCTS ||--|{ PRODUCT_VARIANTS : "defines"
-    PRODUCTS {
-        uuid id PK
-        string name
-        string product_type "software | service | addon"
-        numeric base_sales_price "NUMERIC(16, 4)"
-        numeric cost_price "NUMERIC(16, 4)"
-        text notes
-        datetime created_at
-    }
-
-    PRODUCT_VARIANTS {
-        uuid id PK
-        uuid product_id FK
-        string attribute_name "e.g. Brand"
-        string variant_value "e.g. Odoo"
-        numeric price_extra "NUMERIC(16, 4) - e.g. 560.00"
-        string sku UK
-    }
-
-    BILLING_PLANS {
-        uuid id PK
-        string name
-        string interval_unit "daily | weekly | monthly | yearly"
-        int interval_count "e.g. 1"
-        int min_quantity "Minimum order seats"
-        date available_from
-        date available_to
-        boolean can_be_paused "Admin policy"
-        boolean can_be_renewed "Admin policy"
-        boolean can_be_closed_early "Admin policy"
-        boolean auto_close_at_end "Admin policy"
-    }
+```
++--------------------------------------------------------------------------------------------------+
+|                                    NEXT.JS 15 + SUPABASE ARCHITECTURE                            |
++--------------------------------------------------------------------------------------------------+
+|  PRESENTATION TIER (Next.js 15 App Router + React 19)                                           |
+|  - Three.js Interactive Ambient Canvas (Hero background with subtle particle velocity)           |
+|  - GSAP Timeline Engine (Micro-interactions, staggered card reveals, page transitions)          |
+|  - Dark Mode: Obsidian Carbon (#090a0f) | Light Mode: Crisp Porcelain (#ffffff)                 |
+|  - Action Buttons: High-Venture Light Sky Blue (#38bdf8 / #0ea5e9) with ambient glow             |
+|  - Role-Segregated Portals: /admin (Operations), /staff (Sales/Desk), /portal (Customer)       |
++--------------------------------------------------+-----------------------------------------------+
+                                                   | Server Actions / HTTPS
++--------------------------------------------------v-----------------------------------------------+
+|  LOGIC & API TIER (Next.js Server Actions & Route Handlers)                                     |
+|  - Password Regex Validator (>8 chars, uppercase, lowercase, special char)                      |
+|  - Single-use, 15-minute tokenized password reset engine (SHA-256 hashed storage)               |
+|  - Brand Variant Surcharge Engine (Base Price + Delta e.g. Odoo Brand +560.00)                   |
+|  - Plan Policy Engine (Daily/Weekly/Monthly/Yearly, min_qty, auto-close, pause, renew toggles)   |
++--------------------------------------------------+-----------------------------------------------+
+                                                   | RLS-Guarded Connections
++--------------------------------------------------v-----------------------------------------------+
+|  PERSISTENCE TIER (Supabase Managed PostgreSQL 17 + Local SQLite Fallback Engine)                |
+|  - Strict Decimal Arithmetic: NUMERIC(16, 4) on all currency columns                             |
+|  - Row Level Security (RLS): Customer isolation (Customer A cannot read Customer B's records)   |
+|  - Zero-Friction Dual Mode: Live Supabase cloud OR offline local SQLite for judge evaluation    |
++--------------------------------------------------------------------------------------------------+
 ```
 
 ---
 
-## 3. Detailed Functional Specifications & Business Logic
+## 2. UI/UX Design System Specification (Stripe & Linear Inspired)
 
-### 3.1 Authentication & Role-Based Access Control (RBAC)
-- **Password Complexity Validator (Server-Side & Client-Side):**
-  $$\text{Regex: } ^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{9,}$$$
-  *Guard:* Any password $\le 8$ characters or missing an uppercase letter, lowercase letter, or special character is rejected with HTTP 422.
-- **Supabase Row-Level Security (RLS) Policies:**
-  - `admin`: Full unrestricted read/write access across all tables.
-  - `staff`: Read/write access on quotations and subscriptions; read-only on product catalog; forbidden from provisioning other staff members.
-  - `customer`: Strict tenant isolation:
-    ```sql
-    CREATE POLICY customer_portal_isolation ON subscriptions
+To ensure the platform looks like a top-tier venture-backed product rather than an AI-generated template:
+
+### 2.1 Color Palette & Theme Tokens
+| Token | Dark Mode (Default) | Light Mode | Application |
+| :--- | :--- | :--- | :--- |
+| **Canvas Background** | `#090a0f` (Matte Obsidian) | `#ffffff` (Crisp Porcelain) | Full page root background |
+| **Card Surface** | `#11141c` (Carbon Slate) | `#f8fafc` (Soft Ice White) | KPI cards, data tables, modals |
+| **Border / Divider** | `rgba(255, 255, 255, 0.08)` | `#e2e8f0` (Slate 200) | Card outlines, table gridlines |
+| **Primary Button** | `#38bdf8` $\rightarrow$ `#0ea5e9` | `#0284c7` $\rightarrow$ `#0ea5e9` | Light Sky Blue gradient with `shadow-[0_0_20px_rgba(56,189,248,0.3)]` |
+| **Text Primary** | `#f8fafc` (Zinc 50) | `#0f172a` (Slate 900) | Headers, active values, metric figures |
+| **Text Secondary** | `#94a3b8` (Slate 400) | `#64748b` (Slate 500) | Labels, subheadings, table headers |
+| **Badge Accent** | `#38bdf8` (15% tint) | `#0ea5e9` (10% tint) | Variant tags, role indicators, status pills |
+
+### 2.2 Micro-Interactions & Animation Stack
+1. **Three.js Ambient Canvas:**
+   - Subtle, GPU-accelerated particle constellation or gentle ambient noise mesh rendered on canvas behind the dashboard header.
+   - Dampened mouse-follow interaction with zero CPU lag ($< 2\%$ utilization).
+2. **GSAP (GreenSock) Micro-Interactions:**
+   - Smooth button morph on state changes (e.g., Quotation $\rightarrow$ Confirmed).
+   - Instant tab indicator slider when switching between **Admin View**, **Staff View**, and **Customer Portal**.
+   - Metric tickers that count up smoothly on dashboard mount.
+3. **Tabular Figures & Typography:**
+   - Fonts: `Inter` or `Geist Sans` with CSS feature `font-variant-numeric: tabular-nums` to guarantee monetary numbers align vertically without jitter.
+
+---
+
+## 3. Database Schema & RLS Security Policies (Supabase DDL)
+
+```sql
+-- 1. Profiles & RBAC (Linked to auth.users)
+CREATE TYPE user_role AS ENUM ('admin', 'staff', 'customer');
+
+CREATE TABLE profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    role user_role NOT NULL DEFAULT 'customer',
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Enable Row Level Security
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Profiles viewable by self and internal staff" ON profiles
     FOR SELECT TO authenticated
-    USING (customer_id = auth.uid() OR (SELECT role FROM profiles WHERE id = auth.uid()) IN ('admin', 'staff'));
-    ```
+    USING (id = auth.uid() OR (SELECT role FROM profiles WHERE id = auth.uid()) IN ('admin', 'staff'));
 
-### 3.2 Product Variant Pricing Algorithm
-When a product variant is selected, its operational price is computed deterministically:
-$$\text{Effective Unit Price} = \text{Product.base\_sales\_price} + \sum \text{Variant.price\_extra}$$
+CREATE POLICY "Admin can manage all profiles" ON profiles
+    FOR ALL TO authenticated
+    USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
 
-*Example from Problem Statement:*
-- Product: "Enterprise ERP Software" $\rightarrow$ `base_sales_price = 1200.00`
-- Variant: "Brand: Odoo" $\rightarrow$ `price_extra = 560.00`
-- Calculated Unit Price = $1200.00 + 560.00 = \mathbf{1760.00}$.
+-- 2. Single-Use Password Reset Tokens
+CREATE TABLE password_reset_tokens (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    token_hash VARCHAR(64) NOT NULL, -- SHA-256 of raw random token
+    expires_at TIMESTAMPTZ NOT NULL,  -- 15-minute expiration
+    used BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 
-### 3.3 Plan Recurrence & Policy Validation
-- A plan can only be assigned to a new subscription if:
-  1. `CURRENT_DATE >= available_from` (if set).
-  2. `CURRENT_DATE <= available_to` (if set).
-  3. Subscription line quantity $\ge$ `plan.min_quantity`.
+-- 3. Product Catalog & Brand Variants
+CREATE TABLE products (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    product_type VARCHAR(50) NOT NULL, -- 'software', 'service', 'addon'
+    base_sales_price NUMERIC(16, 4) NOT NULL CHECK (base_sales_price >= 0),
+    cost_price NUMERIC(16, 4) NOT NULL DEFAULT 0.0000,
+    notes TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE product_variants (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    attribute_name VARCHAR(100) NOT NULL, -- e.g. 'Brand'
+    variant_value VARCHAR(100) NOT NULL,  -- e.g. 'Odoo'
+    price_extra NUMERIC(16, 4) NOT NULL DEFAULT 0.0000, -- e.g. +560.00
+    sku VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- 4. Billing Plans with Policy Controls
+CREATE TYPE billing_interval AS ENUM ('daily', 'weekly', 'monthly', 'yearly');
+
+CREATE TABLE billing_plans (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    interval_unit billing_interval NOT NULL,
+    interval_count INT NOT NULL DEFAULT 1 CHECK (interval_count >= 1),
+    plan_price NUMERIC(16, 4) NOT NULL DEFAULT 0.0000,
+    min_quantity INT NOT NULL DEFAULT 1 CHECK (min_quantity >= 1),
+    available_from DATE,
+    available_to DATE,
+    can_be_paused BOOLEAN NOT NULL DEFAULT TRUE,
+    can_be_renewed BOOLEAN NOT NULL DEFAULT TRUE,
+    can_be_closed_early BOOLEAN NOT NULL DEFAULT TRUE,
+    auto_close_at_end BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
 
 ---
 
-## 4. UI/UX Design System Specification (Phase 1)
+## 4. Functional Specifications (Brightloop Scenes 1 & 2)
 
-### 4.1 Theme Tokens & Visual Hierarchy
-- **Dark Mode (Default):**
-  - Background Canvas: `#090a0f` (Deep Obsidian / Matte Carbon)
-  - Surface Cards: `#11141c` with border `1px solid rgba(255, 255, 255, 0.08)`
-  - Primary Action Buttons: Gradient from `#0284c7` to `#0ea5e9` with subtle hover glow `box-shadow: 0 0 20px rgba(14, 165, 233, 0.35)`
-  - Text: Primary `#f8fafc`, Secondary `#94a3b8`, Muted `#64748b`
-- **Light Mode:**
-  - Background Canvas: `#f8fafc` (Soft Cloud Slate)
-  - Surface Cards: `#ffffff` with subtle border `#e2e8f0` and soft shadow `0 4px 6px -1px rgba(0, 0, 0, 0.05)`
-  - Primary Action Buttons: Solid Royal Sky `#0284c7` hover `#0369a1`
-- **Component Micro-Interactions (Framer Motion / GSAP):**
-  - Smooth tab switching between **Admin**, **Staff**, and **Customer Portal**.
-  - Interactive pricing calculator showing real-time price updates when selecting the `Odoo` brand variant (+560).
+### 4.1 Scene 1: Customer Signup, Security & RBAC
+- **Password Regex Enforcement:**
+  $$\text{Complexity Pattern: } ^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{9,}$$$
+  - Length must strictly exceed 8 characters ($\ge 9$).
+  - Must contain at least one uppercase letter, one lowercase letter, and one special symbol.
+  - Rejection response: `HTTP 422 Unprocessable Entity` with actionable UI tooltip.
+- **Single-Use Password Reset Engine:**
+  - Token generated via `crypto.randomBytes(32).toString('hex')`.
+  - Database stores only the SHA-256 digest: `SHA256(token)`.
+  - Expiry set to $\text{NOW}() + 15 \text{ minutes}$.
+  - Re-use guard: As soon as reset succeeds, `used = TRUE`. Subsequent requests with the same token fail with `TOKEN_EXPIRED_OR_USED`.
+- **Role Permissions Isolation:**
+  - `Admin`: Global super-user. Only role authorized to provision internal staff accounts and configure system-wide tax/discount rules.
+  - `Staff`: Daily operations desk. Creates quotes, confirms subscriptions, monitors billing. Blocked from altering tax rates or adding other staff.
+  - `Customer`: Self-service portal. Strictly isolated by Supabase RLS (`customer_id = auth.uid()`).
+
+### 4.2 Scene 2: Product Variants & Plan Policies
+- **Brand Variant Surcharge Math:**
+  When a product variant is selected on a proposal line:
+  $$\text{Unit Price} = \text{Product.base\_sales\_price} + \sum \text{Variant.price\_extra}$$
+  *Problem Statement Anchor:* Enterprise Software ($1,200.00) with Brand: Odoo ($+560.00$) resolves to $\mathbf{1,760.00}$.
+- **Plan Recurrence & Lifecycle Toggles:**
+  - `interval_unit`: `daily`, `weekly`, `monthly`, `yearly`.
+  - `auto_close_at_end`: If `TRUE`, subscription automatically terminates when reached `expiry_date`.
+  - `can_be_paused`: If `FALSE`, staff/customer attempting to pause receives `ACTION_NOT_PERMITTED_BY_PLAN`.
+  - `can_be_closed_early`: Governs whether premature contract cancellation is allowed.
+  - `available_from` / `available_to`: Date range validity guard.
 
 ---
 
-## 5. API & Server Actions Specification (Next.js 15)
+## 5. End-to-End Build, Debugging & Test Plan (Phase 1)
 
-| Route / Server Action | Allowed Roles | Description |
-| :--- | :--- | :--- |
-| `action: registerCustomer` | Public | Registers customer with strict password regex verification. |
-| `action: loginUser` | Public | Authenticates via Supabase Auth & sets secure HTTP-only session cookie. |
-| `action: requestPasswordReset` | Public | Generates single-use 15-minute token. |
-| `action: resetPasswordWithToken`| Public | Validates token hash and updates password. |
-| `action: createStaffMember` | Admin Only | Provisions internal staff account. |
-| `action: createProductWithVariants` | Admin Only | Creates product with brand variants and extra surcharges. |
-| `action: createBillingPlan` | Admin Only | Configures plan interval and policy toggles. |
-| `GET /api/products` | All Authenticated | Returns product catalog with computed variant prices. |
+```
+Step 1.1: Next.js 15 & Supabase Initialization
+├── Setup Next.js 15 App Router with TypeScript and Tailwind CSS v4.
+├── Install dependencies: @supabase/supabase-js, @supabase/ssr, gsap, three, lucide-react.
+└── Configure Supabase environment variables (.env.local) with local SQLite fallback engine.
+
+Step 1.2: Design System & Root Layout
+├── Configure dark/light mode toggle with default dark (#090a0f obsidian canvas).
+├── Build reusable UI components: <Button variant="sky-glow">, <MetricCard>, <Badge>, <Input>.
+└── Embed Three.js background canvas component (<AmbientCanvas />) with smooth performance.
+
+Step 1.3: Auth & RBAC Module
+├── Implement /login, /register, and /forgot-password routes.
+├── Implement client + server password regex validation (>8 chars, upper, lower, special).
+├── Implement tokenized password reset flow with 15-minute expiry.
+└── Add Next.js middleware enforcing role boundaries (/admin, /staff, /portal).
+
+Step 1.4: Catalog & Plan Engine
+├── Implement Products management UI with dynamic brand variant adder (+560 markup calculator).
+├── Implement Billing Plans configuration form with interval dropdown and policy toggles.
+└── Add Server Actions with Supabase RLS enforcement.
+
+Step 1.5: Verification & Automated Test Suite
+├── Unit Test 1: Password regex rejects 'WeakPass', 'Short1!', and accepts 'Brightloop2026!'.
+├── Unit Test 2: Staff creation blocked for non-admin users (HTTP 403).
+├── Unit Test 3: Odoo variant (+560) correctly calculates unit price.
+└── Unit Test 4: Password reset token expires after 15 minutes and cannot be reused.
+```
+
+### Git Commit Milestone
+```bash
+git commit -m "feat(phase1): implement nextjs15 foundation, obsidian-sky ui, supabase rbac, catalog with brand variants, and plan policies"
+```
 
 ---
 
-## 6. Acceptance Criteria & Gravitas Verification Contract (Phase 1)
+## 6. Acceptance Criteria & Gravitas Contract (Phase 1)
 
-- [ ] **AC-1.1:** Attempting to register with password `Pass123` fails with 422 (must be $>8$ chars, uppercase, lowercase, special char).
-- [ ] **AC-1.2:** Admin can create a staff member, but a staff member attempting to create another staff member gets HTTP 403 Forbidden.
-- [ ] **AC-1.3:** Creating product with base price 1000 and Odoo brand variant with price extra 560 returns effective unit price 1560.
-- [ ] **AC-1.4:** Password reset token expires after 15 minutes and cannot be reused twice.
-- [ ] **AC-1.5:** Plan with `min_quantity = 5` rejects any order with quantity $< 5$.
-- [ ] **AC-1.6:** Next.js UI cleanly toggles between Dark Mode (`#090a0f`) and Light Mode (`#ffffff`) without hydration mismatch.
+- [ ] **AC-1.1:** Registration with password $\le 8$ characters or missing special characters fails with a clear validation error.
+- [ ] **AC-1.2:** Admin can provision staff accounts; staff attempting to provision another staff member receives HTTP 403 Forbidden.
+- [ ] **AC-1.3:** Selecting Odoo Brand variant on a product adds exactly 560.00 to the base price across all calculations.
+- [ ] **AC-1.4:** Password reset token expires after 15 minutes and is invalidated immediately upon first use.
+- [ ] **AC-1.5:** UI switches seamlessly between Obsidian Dark (`#090a0f`) and Porcelain Light (`#ffffff`) with Light Sky Blue glow buttons.
 
 ---
 *Signed off for Phase 1 Implementation.*
