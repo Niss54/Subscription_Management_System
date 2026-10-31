@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.database import engine, Base, SessionLocal
 from app.models import User, UserRole
 from app.auth import get_password_hash
-from app.routers import auth, products, plans, quotation_templates
+from app.routers import auth, products, plans, quotation_templates, subscriptions, discounts, invoices
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -50,18 +50,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ─── Register Phase 1 Routers ───
+# ─── Register Routers ───
 app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(plans.router)
 app.include_router(quotation_templates.router)
+app.include_router(subscriptions.router)
+app.include_router(discounts.router)
+app.include_router(invoices.router)
 
 @app.get("/health")
 def health_check():
     return {
         "status": "healthy",
         "service": "Brightloop Subscription Billing Engine",
-        "phase": "Phase 1: Foundation & Data Layer"
+        "version": "2.0.0",
+        "phase": "Phase 2: Core Commercial Billing Engine"
     }
 
 if __name__ == "__main__":

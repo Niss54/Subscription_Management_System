@@ -256,6 +256,7 @@ class Invoice(Base):
     amount_discount = Column(Numeric(16, 4), nullable=False, default=Decimal("0.0000"))
     amount_tax = Column(Numeric(16, 4), nullable=False, default=Decimal("0.0000"))
     amount_total = Column(Numeric(16, 4), nullable=False, default=Decimal("0.0000"))
+    amount_paid = Column(Numeric(16, 4), nullable=False, default=Decimal("0.0000"))
     idempotency_key = Column(String(128), unique=True, nullable=False)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 

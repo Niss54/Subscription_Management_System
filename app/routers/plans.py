@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -10,7 +10,7 @@ from app.auth import require_admin, get_current_user
 router = APIRouter(prefix="/plans", tags=["plans"])
 
 
-@router.post("", response_model=BillingPlanOut)
+@router.post("", response_model=BillingPlanOut, status_code=status.HTTP_201_CREATED)
 def create_billing_plan(
     payload: BillingPlanCreate,
     db: Session = Depends(get_db),

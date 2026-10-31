@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -13,7 +13,7 @@ from app.auth import require_admin, require_admin_or_staff, get_current_user
 router = APIRouter(prefix="/quotation-templates", tags=["quotation-templates"])
 
 
-@router.post("", response_model=QuotationTemplateOut)
+@router.post("", response_model=QuotationTemplateOut, status_code=status.HTTP_201_CREATED)
 def create_quotation_template(
     payload: QuotationTemplateCreate,
     db: Session = Depends(get_db),

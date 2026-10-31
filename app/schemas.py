@@ -26,6 +26,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
     user_id: str
+    id: Optional[str] = None
     email: str
     role: str
     full_name: str
@@ -148,3 +149,120 @@ class QuotationTemplateOut(BaseModel):
     notes: Optional[str]
     lines: List[QuotationTemplateLineOut] = []
     model_config = ConfigDict(from_attributes=True)
+
+
+# ─────────────── SUBSCRIPTION SCHEMAS ───────────────
+
+class SubscriptionLineCreate(BaseModel):
+    variant_id: str
+    quantity: Decimal = Decimal("1.0000")
+    unit_price: Optional[Decimal] = None
+    tax_rate: Optional[Decimal] = Decimal("0.00")
+
+class SubscriptionLineOut(BaseModel):
+    id: str
+    variant_id: str
+    quantity: Decimal
+    unit_price: Decimal
+    tax_rate: Decimal
+    model_config = ConfigDict(from_attributes=True)
+
+class SubscriptionCreate(BaseModel):
+    customer_id: str
+    plan_id: str
+    start_date: Optional[date] = None
+    payment_terms: str = "Net 15"
+    notes: Optional[str] = None
+    lines: List[SubscriptionLineCreate] = []
+
+class SubscriptionFromTemplateCreate(BaseModel):
+    customer_id: str
+    template_id: str
+    start_date: Optional[date] = None
+    payment_terms: Optional[str] = None
+    notes: Optional[str] = None
+
+class SubscriptionStateTransition(BaseModel):
+    target_state: SubscriptionState
+    reason: Optional[str] = None
+
+class SubscriptionOut(BaseModel):
+    id: str
+    subscription_number: str
+    customer_id: str
+    plan_id: str
+    state: SubscriptionState
+    start_date: Optional[date]
+    expiry_date: Optional[date]
+    next_invoice_date: Optional[date]
+    payment_terms: str
+    notes: Optional[str]
+    created_at: datetime
+    lines: List[SubscriptionLineOut] = []
+    model_config = ConfigDict(from_attributes=True)
+
+
+# ─────────────── DISCOUNT SCHEMAS ───────────────
+
+class DiscountRuleCreate(BaseModel):
+    code: str
+    discount_type: DiscountType
+    discount_value: Decimal
+    min_purchase_amount: Decimal = Decimal("0.0000")
+    min_quantity: int = 0
+    start_date: Optional[date] = None
+    end_date: Optional[date] = None
+    max_uses: Optional[int] = None
+    scope: DiscountScope = DiscountScope.subscription
+    target_product_id: Optional[str] = None
+    is_active: bool = True
+
+class DiscountRuleOut(DiscountRuleCreate):
+    id: str
+    current_uses: int
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+class ApplyDiscountRequest(BaseModel):
+    discount_code: str
+
+
+# ─────────────── INVOICE SCHEMAS ───────────────
+
+class InvoiceLineOut(BaseModel):
+    id: str
+    variant_id: str
+    description: str
+    quantity: Decimal
+    unit_price: Decimal
+    tax_rate: Decimal
+    discount_amount: Decimal
+    line_subtotal: Decimal
+    model_config = ConfigDict(from_attributes=True)
+
+class InvoiceOut(BaseModel):
+    id: str
+    invoice_number: str
+    subscription_id: str
+    customer_id: str
+    status: InvoiceStatus
+    invoice_date: date
+    due_date: date
+    billing_period_start: date
+    billing_period_end: date
+    amount_untaxed: Decimal
+    amount_discount: Decimal
+    amount_tax: Decimal
+    amount_total: Decimal
+    amount_paid: Decimal = Decimal("0.0000")
+    idempotency_key: str
+    created_at: datetime
+    lines: List[InvoiceLineOut] = []
+    model_config = ConfigDict(from_attributes=True)
+
+class BillingRunResult(BaseModel):
+    processed_count: int
+    invoices_generated: int
+    skipped_count: int
+    errors: List[str] = []
+

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from decimal import Decimal
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/products", tags=["products"])
 
 # ─────────────── PRODUCTS & BRAND VARIANTS ───────────────
 
-@router.post("", response_model=ProductOut)
+@router.post("", response_model=ProductOut, status_code=status.HTTP_201_CREATED)
 def create_product(payload: ProductCreate, db: Session = Depends(get_db), _=Depends(require_admin)):
     """PDF Rule: Admin adds product with name, type, sales price, cost price, notes, and variants (e.g. Odoo brand adds 560)."""
     product = Product(
@@ -61,7 +61,7 @@ def get_product(id: str, db: Session = Depends(get_db), _=Depends(get_current_us
     return product
 
 
-@router.post("/{id}/variants", response_model=ProductVariantOut)
+@router.post("/{id}/variants", response_model=ProductVariantOut, status_code=status.HTTP_201_CREATED)
 def add_product_variant(
     id: str,
     payload: ProductVariantCreate,
@@ -91,7 +91,7 @@ def add_product_variant(
 
 # ─────────────── TAX RULES (Admin Set) ───────────────
 
-@router.post("/taxes", response_model=TaxRuleOut)
+@router.post("/taxes", response_model=TaxRuleOut, status_code=status.HTTP_201_CREATED)
 def create_tax_rule(payload: TaxRuleCreate, db: Session = Depends(get_db), _=Depends(require_admin)):
     """PDF Rule: Taxes are calculated automatically from rules the admin has set."""
     tax = TaxRule(
