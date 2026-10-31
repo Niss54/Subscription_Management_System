@@ -22,7 +22,11 @@ def generate_sub_number(db: Session) -> str:
     current_year = date.today().year
     prefix = f"SUB-{current_year}-"
     count = db.query(Subscription).filter(Subscription.subscription_number.like(f"{prefix}%")).count()
-    return f"{prefix}{count + 1:04d}"
+    candidate = f"{prefix}{count + 1:04d}"
+    while db.query(Subscription).filter(Subscription.subscription_number == candidate).first() is not None:
+        count += 1
+        candidate = f"{prefix}{count + 1:04d}"
+    return candidate
 
 @router.post("", response_model=SubscriptionOut, status_code=status.HTTP_201_CREATED)
 def create_subscription(

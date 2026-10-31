@@ -47,7 +47,11 @@ def generate_invoice_number(db: Session) -> str:
     current_year = date.today().year
     prefix = f"INV-{current_year}-"
     count = db.query(Invoice).filter(Invoice.invoice_number.like(f"{prefix}%")).count()
-    return f"{prefix}{count + 1:04d}"
+    candidate = f"{prefix}{count + 1:04d}"
+    while db.query(Invoice).filter(Invoice.invoice_number == candidate).first() is not None:
+        count += 1
+        candidate = f"{prefix}{count + 1:04d}"
+    return candidate
 
 def generate_invoice_for_subscription(
     db: Session,
@@ -156,6 +160,7 @@ def run_billing_cycle(db: Session, run_date: Optional[date] = None) -> dict:
             else:
                 skipped_count += 1
         except Exception as e:
+            db.rollback()
             errors.append(f"Subscription {sub.subscription_number}: {str(e)}")
 
     return {
