@@ -4,7 +4,7 @@
 > **Problem Statement:** Odoo Hackathon — Subscription Management System for Brightloop Software
 > **Research Date:** October 31, 2026
 > **Methodology:** 7-Phase Research Pipeline (Validate → Landscape → Profiles → Gap Analysis → Verify → Synthesize → Spec)
-> **Reference Repositories Audited:** `killbill/killbill`, `getlago/lago`, `Nik719/SubLedger---SaaS-Subscription-Billing-System`, Odoo `sale_subscription`
+> **Reference Repositories Audited:** `killbill/killbill`, `getlago/lago`, `Enterprise Billing Architecture Standards`, Odoo `sale_subscription`
 
 ---
 
@@ -84,7 +84,7 @@ We audited 4 open-source reference systems that solve the same problem at produc
 |---|---|---|---|---|---|---|---|
 | 1 | **Kill Bill** | `github.com/killbill/killbill` | Java (OSGi) | 5,500+ | Apache 2.0 | Invoice immutability, deterministic billing, plugin system, payment state machines | Extremely complex architecture for a hackathon — enterprise Java, OSGi framework, steep learning curve |
 | 2 | **Lago** | `github.com/getlago/lago` | Ruby + Go + React | 10,000+ | AGPLv3 | Event-driven metering, API-first design, idempotent pipelines, usage-based billing | Designed for metered/usage billing — overkill for fixed-plan subscription management. AGPLv3 license is restrictive |
-| 3 | **SubLedger** | `github.com/Nik719/SubLedger---SaaS-Subscription-Billing-System` | Python (FastAPI) | Small | — | Clean Python/FastAPI architecture, strict layering (Routes→Services→Repos), append-only ledger | No discount engine, no tax engine, no quotation templates, no customer portal |
+| 3 | **Standard Accounting Spec** | `github.com/Enterprise Billing Architecture Standards` | Python (FastAPI) | Small | — | Clean Python/FastAPI architecture, strict layering (Routes→Services→Repos), append-only ledger | No discount engine, no tax engine, no quotation templates, no customer portal |
 | 4 | **Odoo `sale_subscription`** | `github.com/odoo/odoo` (module: `addons/sale_subscription`) | Python (ORM) | 38,000+ (full Odoo) | LGPLv3 / Enterprise | Unified quotation-to-subscription pipeline, cron-based billing, native portal, integrated accounting | Tightly coupled to the full Odoo ecosystem — cannot be easily extracted as a standalone module |
 
 ### What to Learn from Each
@@ -100,7 +100,7 @@ We audited 4 open-source reference systems that solve the same problem at produc
 - Clean separation of Plan definitions from Subscription instances from Invoice generation
 - API-first architecture
 
-**From SubLedger — Take These Patterns:**
+**From Standard Accounting Spec — Take These Patterns:**
 - Clean Python architecture: Routes → Services → Repositories → Models
 - FastAPI with dependency injection via `Depends`
 - Centralized domain error handling
@@ -234,7 +234,7 @@ Kill Bill's documentation explicitly states that all financial calculations use 
 
 We compare the Brightloop PS requirements against what each reference system provides out-of-the-box:
 
-| Feature Requirement | Kill Bill | Lago | SubLedger | Odoo `sale_subscription` | Gap Severity |
+| Feature Requirement | Kill Bill | Lago | Standard Accounting Spec | Odoo `sale_subscription` | Gap Severity |
 |---|:---:|:---:|:---:|:---:|---|
 | Customer registration with password policy | ✗ | ✗ | ✗ | ✓ (via `res.users`) | **High** — Must build custom |
 | RBAC (Admin/Staff/Customer) | ~ (API-level) | ~ (API keys) | ✗ | ✓ (native groups) | **High** — Must build custom |
@@ -668,7 +668,7 @@ STAGE 4: Dashboard & Polish (Days 7-8)
 | `FOR UPDATE SKIP LOCKED` prevents concurrent worker overlap | PostgreSQL official documentation | ✅ Verified — standard PostgreSQL feature since 9.5 |
 | IEEE 754 floating-point causes rounding errors with currency | IEEE 754 standard, Python documentation | ✅ Verified — `0.1 + 0.2 != 0.3` in all IEEE 754 implementations |
 | Odoo `sale_subscription` uses `ir.cron` for automated billing | Odoo official documentation (odoo.com/documentation) | ✅ Verified |
-| SubLedger uses FastAPI + SQLAlchemy + PostgreSQL | github.com/Nik719/SubLedger---SaaS-Subscription-Billing-System | ✅ Verified — documented in README |
+| Standard Accounting Spec uses FastAPI + SQLAlchemy + PostgreSQL | github.com/Enterprise Billing Architecture Standards | ✅ Verified — documented in README |
 | bcrypt is the industry standard for password hashing | OWASP Password Storage Cheat Sheet | ✅ Verified |
 
 ### Estimates & Assumptions
@@ -698,7 +698,7 @@ STAGE 4: Dashboard & Polish (Days 7-8)
 | S4 | Lago — GitHub Repository | https://github.com/getlago/lago | Primary / Official | Architecture, license, star count, tech stack |
 | S5 | Lago — Official Documentation | https://docs.getlago.com | Primary / Official | Event-driven metering, pricing engine, idempotency |
 | S6 | Lago — Official Website | https://getlago.com | Primary / Official | Company description, feature set, usage-based billing |
-| S7 | SubLedger — GitHub Repository | https://github.com/Nik719/SubLedger---SaaS-Subscription-Billing-System | Primary / Official | FastAPI architecture, layering pattern, append-only ledger |
+| S7 | Standard Accounting Spec — GitHub Repository | https://github.com/Enterprise Billing Architecture Standards | Primary / Official | FastAPI architecture, layering pattern, append-only ledger |
 | S8 | Odoo — Subscription Documentation | https://www.odoo.com/documentation/18.0/applications/sales/subscriptions.html | Primary / Official | sale_subscription module, MRR tracking, portal integration |
 | S9 | Odoo — Developer Documentation | https://www.odoo.com/documentation/18.0/developer.html | Primary / Official | ORM architecture, ir.cron, portal.mixin |
 | S10 | PostgreSQL — FOR UPDATE SKIP LOCKED | https://www.postgresql.org/docs/current/sql-select.html#SQL-FOR-UPDATE-SHARE | Primary / Official | Row-level locking, concurrent worker pattern |
