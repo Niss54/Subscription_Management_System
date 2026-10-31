@@ -40,8 +40,8 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Center: Capsule Navigation Pills */}
-        <nav className="hidden md:flex items-center space-x-1 p-1 rounded-full bg-white/5 border border-white/10">
+        {/* Center: Capsule Navigation Links (Matching Screenshot 2 Pill Selection) */}
+        <nav className="hidden md:flex items-center space-x-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -50,7 +50,7 @@ export default function Navbar() {
                 href={item.href}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   isActive
-                    ? 'bg-white/15 text-white border border-white/20 shadow-inner'
+                    ? 'bg-[#222538] text-white border border-white/15 shadow-sm'
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -61,20 +61,20 @@ export default function Navbar() {
         </nav>
 
         {/* Right: Action Buttons (Exact Replica of Screenshot 2 Style) */}
-        <div className="flex items-center space-x-2">
-          {/* Glowing Primary Pill Button ('Run Billing' - like 'Start Talking' in screenshot 2) */}
+        <div className="flex items-center space-x-2.5">
+          {/* Glowing Primary Pill Button ('Run Billing' - Exact match to 'Start Talking' in screenshot 2) */}
           <Link
             href="/admin"
-            className="px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/25 transition-all flex items-center space-x-1.5"
+            className="px-5 py-2 rounded-full text-xs font-bold bg-[#10b981] hover:bg-[#059669] text-slate-950 shadow-lg shadow-emerald-500/30 transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Run Billing</span>
           </Link>
 
-          {/* Secondary Outlined Pill Button ('Account' - like 'Patient Status' in screenshot 2) */}
+          {/* Secondary Outlined Pill Button ('Account' - Exact match to 'Patient Status' in screenshot 2) */}
           <Link
             href="/portal"
-            className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/5 hover:bg-white/10 border border-white/15 text-white transition-all flex items-center space-x-1.5"
+            className="px-4 py-2 rounded-full text-xs font-semibold bg-[#14161f] hover:bg-[#1d1f2c] border border-white/15 text-white transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]"
           >
             <User className="w-3.5 h-3.5" />
             <span>Account</span>
