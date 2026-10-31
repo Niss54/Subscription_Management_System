@@ -148,6 +148,21 @@ class BillingPlan(Base):
     allow_renew = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
+    entitlements = relationship("PlanEntitlement", back_populates="plan", cascade="all, delete-orphan")
+
+
+class PlanEntitlement(Base):
+    __tablename__ = "plan_entitlements"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    plan_id = Column(String(36), ForeignKey("billing_plans.id", ondelete="CASCADE"), nullable=False)
+    feature_key = Column(String(100), nullable=False)     # e.g. "api_access", "export_pdf", "custom_branding"
+    is_enabled = Column(Boolean, nullable=False, default=True)
+    usage_limit = Column(Integer, nullable=True)          # Optional quota limit
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+    plan = relationship("BillingPlan", back_populates="entitlements")
+
 
 class QuotationTemplate(Base):
     __tablename__ = "quotation_templates"

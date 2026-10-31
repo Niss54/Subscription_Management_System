@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import get_db
-from app.models import BillingPlan
-from app.schemas import BillingPlanCreate, BillingPlanOut
+from app.models import BillingPlan, PlanEntitlement
+from app.schemas import BillingPlanCreate, BillingPlanOut, PlanEntitlementCreate, PlanEntitlementOut
 from app.auth import require_admin, get_current_user
 
 router = APIRouter(prefix="/plans", tags=["plans"])
@@ -50,3 +50,33 @@ def get_billing_plan(id: str, db: Session = Depends(get_db), _=Depends(get_curre
     if not plan:
         raise HTTPException(404, "Billing plan not found")
     return plan
+
+
+@router.post('/{id}/entitlements', response_model=PlanEntitlementOut, status_code=status.HTTP_201_CREATED)
+def attach_plan_entitlement(
+    id: str,
+    payload: PlanEntitlementCreate,
+    db: Session = Depends(get_db),
+    _=Depends(require_admin)
+):
+    plan = db.query(BillingPlan).filter(BillingPlan.id == id).first()
+    if not plan:
+        raise HTTPException(404, 'Billing plan not found')
+
+    ent = PlanEntitlement(
+        plan_id=plan.id,
+        feature_key=payload.feature_key,
+        is_enabled=payload.is_enabled,
+        usage_limit=payload.usage_limit
+    )
+    db.add(ent)
+    db.commit()
+    db.refresh(ent)
+    return ent
+
+@router.get('/{id}/entitlements', response_model=List[PlanEntitlementOut])
+def list_plan_entitlements(id: str, db: Session = Depends(get_db), _=Depends(get_current_user)):
+    plan = db.query(BillingPlan).filter(BillingPlan.id == id).first()
+    if not plan:
+        raise HTTPException(404, 'Billing plan not found')
+    return db.query(PlanEntitlement).filter(PlanEntitlement.plan_id == id).all()

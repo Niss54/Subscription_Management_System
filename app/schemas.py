@@ -113,8 +113,20 @@ class BillingPlanCreate(BaseModel):
     allow_early_close: bool = True
     allow_renew: bool = True
 
+class PlanEntitlementCreate(BaseModel):
+    feature_key: str
+    is_enabled: bool = True
+    usage_limit: Optional[int] = None
+
+class PlanEntitlementOut(PlanEntitlementCreate):
+    id: str
+    plan_id: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
 class BillingPlanOut(BillingPlanCreate):
     id: str
+    entitlements: List[PlanEntitlementOut] = []
     model_config = ConfigDict(from_attributes=True)
 
 
