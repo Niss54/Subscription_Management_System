@@ -1,44 +1,29 @@
 # ⚡ PRD PHASE 2: Quotations, Subscription State Machine & Automated Billing Engine
 ## Brightloop Software Subscription Billing Platform (Hackathon Winning Blueprint)
 
-> **Document Version:** 2.0.0 (Production Implementation Specification)  
+> **Document Version:** 2.0.0 (Next.js 15 + Supabase Architecture)  
 > **Engineering Mode:** GRAVITAS Invariant-Enforced Implementation  
+> **Tech Stack:** **Next.js 15 (Server Actions + Route Handlers)** + **Supabase (PostgreSQL 17 Functions & Cron)**  
 > **Target SLA:** 100% Deterministic Recurring Invoicing (Zero Double-Billing)  
-> **Phase Scope:** Quotation Templates, Subscription Lifecycle, Cron Billing Worker, Taxes & Discounts, Step-by-Step Build Plan  
+> **Phase Scope:** Quotation Templates, Subscription Lifecycle, Automated Billing Cron, Dynamic Discounts & Taxes  
 
 ---
 
-## 1. Executive Context & Phase Objective
+## 1. Executive Context & Modern Architecture
 
-Phase 2 constitutes the operational heart of Brightloop Software. It automates the transition from sales quotes to active recurring contracts, handles hundreds of recurring invoices on billing day without manual labor, enforces tax calculation, and executes dynamic discount rules with atomic decrement locks.
+Phase 2 automates the transition from sales quotes to active recurring contracts, handles hundreds of recurring invoices on billing day without manual labor, enforces tax calculation, and executes dynamic discount rules with atomic decrement locks.
 
-### Core Deliverables in Phase 2
-1. **Quotation Templates & Automated Quotation Lifecycle:**
-   - Pre-packaged templates linking plans, products, variants, and default quantities.
-   - Quotation expiration countdown (`expiry_date = created_at + template.validity_days`).
-2. **Robust Subscription State Machine:**
-   - Strict 6-state lifecycle: `Draft` $\rightarrow$ `Quotation` $\rightarrow$ `Confirmed` $\rightarrow$ `Active` $\rightarrow$ `Paused` $\rightarrow$ `Closed`.
-   - Enforcement of plan policy flags (`can_be_paused`, `auto_close_at_end`, `can_be_closed_early`).
-   - Unique sequential numbering: `SUB-2026-XXXX`.
-3. **Automated Recurring Billing Engine (The "Billing Day" Solution):**
-   - Scheduled background worker scanning `next_invoice_date <= CURRENT_DATE`.
-   - Concurrency protection: `SELECT ... FOR UPDATE SKIP LOCKED` (Postgres) / Transactional Lock (SQLite).
-   - Immutability & double-billing prevention: Deterministic SHA-256 Idempotency Keys.
-4. **Dynamic Discount & Tax Engine:**
-   - Fixed vs Percentage discounts.
-   - Scope: Specific product lines vs entire subscription subtotal.
-   - Thresholds: Minimum purchase amount or minimum seats/quantity.
-   - Proportional tax apportionment across multi-rate tax items.
-   - Automatic expiration and atomic `max_uses` concurrency protection.
-5. **Invoice Management:**
-   - State progression: `Draft` $\rightarrow$ `Confirmed` $\rightarrow$ `Paid` / `Cancelled`.
-   - Team actions: Confirm, Cancel, Send (simulated dispatch), Print (PDF / printable layout).
+### 1.1 Technology Architecture Matrix
+| Component | Implementation | Invariant Guarantee |
+| :--- | :--- | :--- |
+| **State Machine Transitions** | Next.js Server Actions with Supabase ACID Transactions | Guaranteed atomic state transitions (`Draft` $\rightarrow$ `Quotation` $\rightarrow$ `Confirmed` $\rightarrow$ `Active` $\rightarrow$ `Paused` $\rightarrow$ `Closed`). |
+| **Billing Worker Engine** | Next.js API Route `/api/cron/billing-run` secured with `CRON_SECRET` + Supabase SQL Function with `SKIP LOCKED` | Immune to cron overlap; immune to double-billing via deterministic SHA-256 idempotency key. |
+| **Discount Atomic Engine** | PostgreSQL single-statement conditional update | Prevents concurrency exploitation on limited-use promotion rules. |
+| **Invoice Render & Export** | Next.js Dynamic Printable View (`@react-pdf/renderer` or `@media print` CSS) | Formats invoices into professional printable PDF artifacts with customer & line breakdowns. |
 
 ---
 
-## 2. Technical Architecture & Data Models (Phase 2)
-
-### 2.1 Entity Relationship Diagram (Phase 2 Sub-schema)
+## 2. Entity Relationship Diagram (Phase 2 Sub-schema on Supabase)
 
 ```mermaid
 erDiagram
@@ -97,18 +82,6 @@ erDiagram
         string idempotency_key UK "SHA256 Hash"
     }
 
-    INVOICE_LINES {
-        uuid id PK
-        uuid invoice_id FK
-        uuid variant_id FK
-        string description
-        numeric quantity
-        numeric unit_price
-        numeric discount_amount
-        numeric tax_amount
-        numeric line_total
-    }
-
     DISCOUNT_RULES {
         uuid id PK
         string code UK
@@ -123,13 +96,6 @@ erDiagram
         string scope "subscription | product"
         uuid target_product_id FK
         boolean is_active
-    }
-
-    TAX_RULES {
-        uuid id PK
-        string name
-        numeric rate "Percentage e.g. 18.00"
-        string applicable_category
     }
 ```
 
@@ -181,7 +147,7 @@ stateDiagram-v2
 
 ### 4.1 Concurrency & Idempotency Formula
 To completely eradicate double billing during mass billing runs:
-1. **Locking Query:**
+1. **Locking Query on Supabase PostgreSQL:**
    ```sql
    SELECT id, customer_id, plan_id, next_invoice_date 
    FROM subscriptions 
@@ -193,21 +159,12 @@ To completely eradicate double billing during mass billing runs:
    $$\text{Idempotency Key} = \text{SHA256}(\text{subscription\_id} + \text{": "} + \text{period\_start} + \text{": "} + \text{period\_end})$$
    A database-level `UNIQUE` constraint on `invoices.idempotency_key` guarantees that even under network partitions or worker crashes, duplicate invoices fail with an explicit integrity violation.
 
-### 4.2 Tax & Discount Ordering Formula (Proportional Apportionment)
-When a subscription-level discount applies across multiple items with different tax rates:
-1. Compute gross line subtotals: $L_i = Q_i \times P_i$.
-2. Compute gross total: $G = \sum L_i$.
-3. Compute discount:
-   - If percentage: $D_i = L_i \times \frac{\text{discount\_rate}}{100}$.
-   - If fixed: $D_i = \text{round}\left(\text{Total Discount} \times \frac{L_i}{G}, 4\right)$.
-4. Compute line taxable base: $B_i = \max(0, L_i - D_i)$.
-5. Compute line tax: $T_i = B_i \times \frac{\text{Tax Rate}_i}{100}$.
-6. Line Total: $TOT_i = B_i + T_i$.
-7. Invoice Totals:
-   $$\text{amount\_untaxed} = \sum L_i$$
-   $$\text{amount\_discount} = \sum D_i$$
-   $$\text{amount\_tax} = \sum T_i$$
-   $$\text{amount\_total} = \sum TOT_i$$
+### 4.2 Tax & Discount Ordering Formula
+Tax compliance mandates:
+$$\text{Gross Subtotal} = \sum (\text{Line.quantity} \times \text{Line.unit\_price})$$
+$$\text{Taxable Base} = \max(0, \text{Gross Subtotal} - \text{Discount})$$
+$$\text{Tax Amount} = \text{Taxable Base} \times \text{Tax Rate}$$
+$$\text{Final Total} = \text{Taxable Base} + \text{Tax Amount}$$
 
 ### 4.3 Atomic Discount Usage Lock
 To prevent concurrency abuse when a discount has a limit (e.g., first 50 customers):
@@ -223,54 +180,41 @@ If 0 rows are returned, the discount is exhausted and must not be applied to the
 
 ---
 
-## 5. End-to-End Implementation Plan (Phase 2)
+## 5. UI/UX Workflow & Component Specification (Next.js 15)
 
-### Step 2.1: Quotation Template Engine
-- Implement `models/quotation_template.py` linking template header and child lines.
-- Implement `services/quotation_service.py`:
-  - `create_quotation_from_template(template_id, customer_id)`: clones lines, sets default terms, calculates `expiry_date = today + validity_days`.
-  - Generates unique sequence number: `SUB-2026-XXXX`.
-
-### Step 2.2: State Machine Implementation
-- Implement `core/state_machine.py`:
-  - State transition validator enforcing legal pathways.
-  - Guard checks: validity date on confirmation, `can_be_paused` flag on pause, `can_be_closed_early` on cancellation.
-  - Pause duration tracking with automatic date recalibration upon resumption.
-
-### Step 2.3: Tax & Dynamic Discount Engine
-- Implement `services/tax_service.py` to retrieve tax rules by product category.
-- Implement `services/discount_service.py`:
-  - Evaluates start/end date, min purchase amount, min quantity, and remaining usage capacity.
-  - Implements proportional discount apportionment formula across line items.
-  - Manages atomic increment of `current_uses`.
-
-### Step 2.4: Mass Invoicing Background Worker
-- Implement `workers/billing_worker.py`:
-  - Scans active subscriptions where `next_invoice_date <= CURRENT_DATE`.
-  - Generates SHA-256 idempotency key: `SHA256(sub_id + str(period_start) + str(period_end))`.
-  - Atomically creates `Invoice` in `draft` state and advances subscription `next_invoice_date` according to plan frequency (`daily`, `weekly`, `monthly`, `yearly`).
-  - Provides manual trigger endpoint for admin testing: `POST /api/invoices/trigger-billing-run`.
-
-### Step 2.5: Invoice Management & Actions
-- Implement `services/invoice_service.py`:
-  - State transitions: `draft` $\rightarrow$ `confirmed` $\rightarrow$ `paid` / `cancelled`.
-  - Actions: Confirm, Cancel, Send (simulated dispatch), Print (HTML printable template).
-
-### Step 2.6: Verification & Automated Tests
-- Create `tests/test_phase2_billing_engine.py`:
-  - Test 1: Quotation expiration guard (quote past expiry date cannot be confirmed).
-  - Test 2: State machine pause guard (plan with `can_be_paused=False` rejects pause).
-  - Test 3: Idempotent billing run (triggering billing 5 times generates exactly 1 invoice per due subscription).
-  - Test 4: Dynamic discount auto-expiry and max uses exhaustion.
-  - Test 5: Tax calculation order-of-operations (taxes applied to net discounted amount).
-
-### Step 2.7: Git Commit Milestone
-- Run test suite: `pytest tests/test_phase2_billing_engine.py -v`.
-- Commit message: `feat(phase2): implement quotation lifecycle, subscription state machine, automated billing worker, taxes, and dynamic discounts`.
+1. **Quotation Builder Interface:**
+   - Sales reps select a template dropdown $\rightarrow$ auto-populates product lines with brand variant options.
+   - Interactive badge displaying days remaining until quotation expiration.
+2. **Subscription Management Table:**
+   - Status pill badges with distinctive glow:
+     - `Active`: Emerald green (`bg-emerald-500/10 text-emerald-400 border border-emerald-500/20`)
+     - `Quotation`: Amber (`bg-amber-500/10 text-amber-400 border border-amber-500/20`)
+     - `Paused`: Violet (`bg-purple-500/10 text-purple-400 border border-purple-500/20`)
+     - `Closed`: Slate (`bg-slate-500/10 text-slate-400 border border-slate-500/20`)
+   - Action buttons (Confirm, Pause, Cancel, Trigger Bill) with micro-tooltips.
+3. **Invoice Viewer & PDF Print:**
+   - Clean modal view displaying line items, brand variant pricing (+560 extra), tax breakdown, and discount lines.
+   - Instant `@media print` button to generate a clean client-ready PDF invoice.
 
 ---
 
-## 6. Acceptance Criteria & Gravitas Verification Contract (Phase 2)
+## 6. API & Server Actions Specification (Phase 2)
+
+| Route / Server Action | Allowed Roles | Description |
+| :--- | :--- | :--- |
+| `action: createQuotationTemplate` | Admin Only | Configures pre-packaged quotation template. |
+| `action: createSubscription` | Staff, Admin | Initializes draft subscription from scratch or template. |
+| `action: transitionSubscription` | Staff, Admin | Executes state change with strict guard checks. |
+| `action: pauseSubscription` | Staff, Admin | Pauses subscription if plan allows `can_be_paused`. |
+| `action: resumeSubscription` | Staff, Admin | Resumes subscription and shifts next invoice date. |
+| `action: createDiscountRule` | Admin Only | Defines percentage/fixed discount with thresholds and limits. |
+| `POST /api/cron/billing` | System / Admin | Executes scheduled recurring billing cycle with `SKIP LOCKED`. |
+| `action: confirmInvoice` | Staff, Admin | Confirms draft invoice and posts to customer ledger. |
+| `action: cancelInvoice` | Staff, Admin | Cancels and voids an uncollected invoice. |
+
+---
+
+## 7. Acceptance Criteria & Gravitas Verification Contract (Phase 2)
 
 - [ ] **AC-2.1:** Quote past its validity duration cannot be confirmed (fails with validation error).
 - [ ] **AC-2.2:** Subscription on a plan with `can_be_paused = False` fails with HTTP 400 when attempting to pause.
