@@ -17,6 +17,10 @@ plugins/
 .pytest_cache/
 
 # Python / Node caches
+venv/
+.venv/
+*.db
+*.sqlite3
 __pycache__/
 *.py[cod]
 *$py.class

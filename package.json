@@ -1,0 +1,29 @@
+{
+  "name": "subscription-management-system",
+  "version": "1.0.0",
+  "description": "Brightloop Software Subscription Billing Platform — Odoo Hackathon Winning Blueprint",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "node --test tests/*.test.js",
+    "seed": "node scripts/seed_demo_data.js"
+  },
+  "dependencies": {
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "lucide-react": "^0.454.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "@types/node": "^22.8.7",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "autoprefixer": "^10.4.20"
+  }
+}
