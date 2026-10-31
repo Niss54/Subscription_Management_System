@@ -253,30 +253,42 @@
       transform: translateY(-1px);
     }
 
-    /* Navigation Segmented Tab Pills */
+    /* Navigation Segmented Tab Pills (Matching Screenshot 2 Pill Selection) */
     .tab-wrapper-theme {
-      background-color: var(--tab-wrapper-bg);
-      border: 1px solid var(--tab-wrapper-border);
+      background-color: transparent;
+      border: none;
     }
     .tab-pill-active {
-      background-color: var(--tab-active-bg) !important;
-      color: var(--tab-active-text) !important;
-      border: 1px solid var(--tab-active-border) !important;
-      box-shadow: var(--tab-active-shadow) !important;
+      background-color: #222538 !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.16) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
       border-radius: 9999px !important;
       font-weight: 600;
     }
+    html:not(.dark) .tab-pill-active {
+      background-color: #0f172a !important;
+      color: #ffffff !important;
+      border: 1px solid #0f172a !important;
+    }
     .tab-pill-inactive {
       background-color: transparent !important;
-      color: var(--tab-inactive-text) !important;
+      color: #94a3b8 !important;
       border: 1px solid transparent !important;
       box-shadow: none !important;
       border-radius: 9999px !important;
       font-weight: 500;
     }
     .tab-pill-inactive:hover {
-      color: var(--text-primary) !important;
-      background-color: var(--tab-inactive-hover) !important;
+      color: #ffffff !important;
+      background-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    html:not(.dark) .tab-pill-inactive {
+      color: #64748b !important;
+    }
+    html:not(.dark) .tab-pill-inactive:hover {
+      color: #0f172a !important;
+      background-color: #f1f5f9 !important;
     }
 
     /* Custom Scrollbars */
@@ -295,24 +307,24 @@
 </head>
 <body class="min-h-screen antialiased selection:bg-zinc-500/20">
 
-  <!-- ==================== FLOATING CAPSULE NAVBAR (SCREENSHOT 2 RAPID AI STYLE) ==================== -->
-  <header class="sticky top-3 sm:top-5 z-40 px-3 sm:px-6 max-w-6xl mx-auto transition-all">
-    <div class="bg-zinc-900/95 dark:bg-[#0c0d14]/95 backdrop-blur-2xl border border-black/10 dark:border-white/10 rounded-full px-3.5 sm:px-6 py-2 shadow-2xl flex items-center justify-between gap-3">
+  <!-- ==================== FLOATING CAPSULE NAVBAR (EXACT REPLICA OF SCREENSHOT 2 DOCK) ==================== -->
+  <header class="sticky top-3 sm:top-5 z-40 px-3 sm:px-6 max-w-5xl mx-auto transition-all">
+    <div class="bg-[#0b0d14]/95 backdrop-blur-2xl border border-white/10 rounded-full px-4 sm:px-6 py-2.5 shadow-2xl shadow-black/50 flex items-center justify-between gap-4">
       
-      <!-- Left: Logo & Brand -->
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
-        <img src="/static/logo.png" alt="Brightloop Logo" class="w-8 h-8 rounded-lg object-contain" />
+      <!-- Left: Logo & Brand (Matching 'RAPID AI CARE COPILOT' reference) -->
+      <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchTab('dashboard')">
+        <img src="/static/logo.png" alt="Brightloop Logo" class="w-8 h-8 rounded-lg object-contain transition-transform group-hover:scale-105" />
         <div class="flex flex-col">
           <div class="flex items-center space-x-1.5">
-            <span class="font-extrabold text-xs sm:text-sm tracking-wider text-primary-theme uppercase leading-none">BRIGHTLOOP</span>
-            <span class="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">AI</span>
+            <span class="font-extrabold text-xs sm:text-sm tracking-wider text-white uppercase leading-none">BRIGHTLOOP</span>
+            <span class="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 font-bold">AI</span>
           </div>
-          <span class="text-[9px] font-mono tracking-widest text-muted-theme uppercase mt-0.5">BILLING COPILOT</span>
+          <span class="text-[9px] font-mono tracking-widest text-slate-400 uppercase mt-0.5">BILLING COPILOT</span>
         </div>
       </div>
 
-      <!-- Center: Capsule Navigation Pills -->
-      <nav class="hidden md:flex items-center space-x-1 p-1 rounded-full tab-wrapper-theme">
+      <!-- Center: Capsule Navigation Links (Matching Screenshot 2 Pill Selection) -->
+      <nav class="hidden md:flex items-center space-x-1">
         <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-1.5 rounded-full text-xs font-semibold transition-all tab-pill-active">
           Dashboard
         </button>
@@ -328,26 +340,26 @@
       </nav>
 
       <!-- Right: Action Buttons (Exact Replica of Screenshot 2 Style) -->
-      <div class="flex items-center space-x-2">
-        <!-- Glowing Primary Pill Button ('Run Billing' - like 'Start Talking' in screenshot 2) -->
-        <button id="btn-run-billing-nav" onclick="triggerMassBilling()" class="px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/25 transition-all flex items-center space-x-1.5">
+      <div class="flex items-center space-x-2.5">
+        <!-- Glowing Primary Pill Button ('Run Billing' - Exact match to 'Start Talking' in screenshot 2) -->
+        <button id="btn-run-billing-nav" onclick="triggerMassBilling()" class="px-5 py-2 rounded-full text-xs font-bold bg-[#10b981] hover:bg-[#059669] text-slate-950 shadow-lg shadow-emerald-500/30 transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]">
           <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
           <span>Run Billing</span>
         </button>
 
-        <!-- Secondary Outlined Pill Button ('Account' - like 'Patient Status' in screenshot 2) -->
-        <button id="btn-auth-nav" onclick="openModal('modal-auth')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/5 hover:bg-white/10 border border-black/10 dark:border-white/15 text-primary-theme transition-all flex items-center space-x-1.5">
+        <!-- Secondary Outlined Pill Button ('Account' - Exact match to 'Patient Status' in screenshot 2) -->
+        <button id="btn-auth-nav" onclick="openModal('modal-auth')" class="px-4 py-2 rounded-full text-xs font-semibold bg-[#14161f] hover:bg-[#1d1f2c] border border-white/15 text-white transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]">
           <i data-lucide="user" class="w-3.5 h-3.5"></i>
           <span id="auth-btn-label">Account</span>
         </button>
 
         <!-- Search (⌘K) -->
-        <button id="btn-quick-search" onclick="openCommandPalette()" class="hidden sm:flex p-1.5 rounded-full hover:bg-white/10 text-muted-theme hover:text-primary-theme transition-colors" title="Search (⌘K)">
+        <button id="btn-quick-search" onclick="openCommandPalette()" class="hidden sm:flex p-1.5 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors" title="Search (⌘K)">
           <i data-lucide="search" class="w-3.5 h-3.5"></i>
         </button>
 
         <!-- Theme Toggle -->
-        <button id="btn-theme-toggle" onclick="toggleTheme()" class="p-1.5 rounded-full hover:bg-white/10 text-secondary-theme transition-colors" title="Toggle Light/Dark Theme">
+        <button id="btn-theme-toggle" onclick="toggleTheme()" class="p-1.5 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors" title="Toggle Light/Dark Theme">
           <i data-lucide="sun" id="theme-icon" class="w-4 h-4"></i>
         </button>
       </div>
@@ -1579,16 +1591,39 @@
           </td>
           <td class="text-secondary-theme">${s.next_invoice_date || 'N/A'}</td>
           <td class="text-right space-x-1">
-            ${s.state === 'active' ? `<button onclick="pauseSubscription('${s.id}')" class="px-2.5 py-1 rounded btn-ghost-theme text-[10px] font-semibold text-amber-600 dark:text-amber-400">Pause</button>` : ''}
-            ${s.state === 'paused' ? `<button onclick="resumeSubscription('${s.id}')" class="px-2.5 py-1 rounded btn-ghost-theme text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">Resume</button>` : ''}
+            ${s.state === 'confirmed' ? `<button onclick="activateSubscription('${s.id}')" class="px-2.5 py-1 rounded btn-tactile-grey text-[10px] font-semibold text-emerald-400">Activate</button>` : ''}
+            ${s.state === 'active' ? `<button onclick="pauseSubscription('${s.id}')" class="px-2.5 py-1 rounded btn-ghost-theme text-[10px] font-semibold text-amber-500">Pause</button>` : ''}
+            ${s.state === 'paused' ? `<button onclick="resumeSubscription('${s.id}')" class="px-2.5 py-1 rounded btn-ghost-theme text-[10px] font-semibold text-emerald-500">Resume</button>` : ''}
           </td>
         </tr>
       `).join('');
     }
 
+    async function activateSubscription(id) {
+      const token = await ensureAdminToken();
+      const res = await fetch(`/subscriptions/${id}/transition`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ target_state: 'active' })
+      });
+      if (res.ok) {
+        showToast('Subscription activated & initial invoice generated!', 'success');
+        loadSubscriptions();
+        loadInvoices();
+        refreshDashboard();
+      } else {
+        const err = await res.json();
+        showToast(`Activation failed: ${err.detail || 'Error'}`, 'error');
+      }
+    }
+
     async function pauseSubscription(id) {
       const token = await ensureAdminToken();
-      const res = await fetch(`/subscriptions/${id}/pause`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`/subscriptions/${id}/transition`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ target_state: 'paused' })
+      });
       if (res.ok) {
         showToast('Subscription paused successfully', 'success');
         loadSubscriptions();
@@ -1601,13 +1636,18 @@
 
     async function resumeSubscription(id) {
       const token = await ensureAdminToken();
-      const res = await fetch(`/subscriptions/${id}/resume`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await fetch(`/subscriptions/${id}/transition`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ target_state: 'active' })
+      });
       if (res.ok) {
         showToast('Subscription resumed to Active', 'success');
         loadSubscriptions();
         refreshDashboard();
       } else {
-        showToast('Failed to resume subscription', 'error');
+        const err = await res.json();
+        showToast(`Failed to resume: ${err.detail || 'Error'}`, 'error');
       }
     }
 

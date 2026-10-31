@@ -75,7 +75,14 @@ if os.path.exists(static_dir):
 def serve_portal():
     index_path = os.path.join(static_dir, "index.html")
     if os.path.exists(index_path):
-        return FileResponse(index_path)
+        return FileResponse(
+            index_path,
+            headers={
+                "Cache-Control": "no-cache, no-store, must-revalidate",
+                "Pragma": "no-cache",
+                "Expires": "0"
+            }
+        )
     return {"message": "Brightloop Billing Engine Online. Visit /docs for Swagger API."}
 
 @app.get("/health")
