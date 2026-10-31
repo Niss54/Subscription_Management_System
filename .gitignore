@@ -1,6 +1,8 @@
 # Dependencies and cloned repos
 research-system-main/
 research-system/
+temp reops/
+temp/
 
 # Agent skills, customizations and plugins (CRITICAL: Never commit to GitHub)
 .gemini/
@@ -8,6 +10,10 @@ skills/
 plugins/
 *.agent
 .gravitas/
+
+# Database & Test files
+*.db
+.pytest_cache/
 
 # Python / Node caches
 venv/
