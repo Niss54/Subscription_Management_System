@@ -146,7 +146,7 @@ test('Phase 3.1 & 3.2: Partial Payment Allocation Engine & Auto-Settlement to Pa
     invoiceId: invId,
     amount: 600.0,
     paymentMethod: 'credit_card',
-    referenceNote: 'Stripe Auth #CC-9941',
+    referenceNote: 'Gateway Auth #CC-9941',
     recordedByUserId: admin.id
   });
 

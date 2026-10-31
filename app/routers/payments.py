@@ -72,7 +72,7 @@ def customer_self_checkout(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Customer self-service online checkout (Stripe/UPI/Card simulation)."""
+    """Customer self-service online checkout (Card / UPI / NetBanking settlement)."""
     invoice = db.query(Invoice).filter(
         Invoice.id == str(payload.invoice_id),
         Invoice.customer_id == current_user.id

@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -20,38 +20,6 @@
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
-          },
-          colors: {
-            brand: {
-              50: '#f0f9ff',
-              100: '#e0f2fe',
-              200: '#bae6fd',
-              300: '#7dd3fc',
-              400: '#38bdf8',
-              500: '#0ea5e9',
-              600: '#0284c7',
-              700: '#0369a1',
-              900: '#0c4a6e',
-              950: '#082f49',
-            },
-            surface: {
-              dark: '#0d121c',
-              darker: '#07090e',
-              card: '#111726',
-              cardHover: '#161f33',
-              border: 'rgba(255, 255, 255, 0.08)',
-              borderActive: 'rgba(56, 189, 248, 0.35)',
-            }
-          },
-          animation: {
-            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            'glow': 'glow 2s ease-in-out infinite alternate',
-          },
-          keyframes: {
-            glow: {
-              '0%': { boxShadow: '0 0 15px rgba(14, 165, 233, 0.2)' },
-              '100%': { boxShadow: '0 0 25px rgba(14, 165, 233, 0.5)' },
-            }
           }
         }
       }
@@ -66,41 +34,251 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
   <style>
+    /* ==========================================================================
+       DUAL COLOR SYSTEM: PURE CRISP WHITE (LIGHT) & REFINED LIGHT BLACK (DARK)
+       FEATURING RICH TACTILE GREY BUTTONS & LINEAR/SUPABASE FINISH
+       ========================================================================== */
+    :root {
+      /* LIGHT MODE: Pure luxury crisp white canvas */
+      --canvas-bg: #f8fafc;
+      --header-bg: rgba(255, 255, 255, 0.94);
+      --header-border: #e4e4e7;
+      
+      --card-bg: #ffffff;
+      --card-border: #e4e4e7;
+      --card-hover-border: #cbd5e1;
+      --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+      
+      --well-bg: #f4f4f5;
+      --well-border: #e4e4e7;
+      --well-subtle: #fafafa;
+      
+      --text-title: #09090b;
+      --text-body: #3f3f46;
+      --text-muted: #71717a;
+      
+      /* Buttons in Light Mode */
+      --btn-primary-bg: #18181b;
+      --btn-primary-hover: #27272a;
+      --btn-primary-text: #ffffff;
+      --btn-primary-border: #18181b;
+      --btn-primary-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      
+      --btn-grey-bg: #f4f4f5;
+      --btn-grey-hover: #e4e4e7;
+      --btn-grey-text: #18181b;
+      --btn-grey-border: #d4d4d8;
+      
+      --tab-nav-bg: #f4f4f5;
+      --tab-nav-border: #e4e4e7;
+      --tab-active-bg: #ffffff;
+      --tab-active-text: #09090b;
+      --tab-active-border: #e4e4e7;
+      --tab-active-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      --tab-inactive-text: #71717a;
+      --tab-inactive-hover: #e4e4e7;
+      
+      --input-bg: #ffffff;
+      --input-text: #09090b;
+      --input-border: #d4d4d8;
+      --input-focus: #18181b;
+      
+      --code-bg: #f4f4f5;
+      --code-text: #09090b;
+      --code-border: #e4e4e7;
+      
+      --table-header-bg: #f8fafc;
+      --table-row-hover: #f1f5f9;
+      --table-border: #f1f5f9;
+      
+      --chart-grid: rgba(0, 0, 0, 0.06);
+      --chart-tick: #71717a;
+      --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+    }
+
+    html.dark {
+      /* DARK MODE: Refined "Light Black" (Graphite / Carbon Obsidian) */
+      --canvas-bg: #121215;           /* Refined Light Black - NOT pitch black #000, NOT blue navy */
+      --header-bg: rgba(23, 24, 28, 0.92);
+      --header-border: rgba(255, 255, 255, 0.08);
+      
+      --card-bg: #1c1d22;            /* Elevated graphite card */
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover-border: rgba(255, 255, 255, 0.18);
+      --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+      
+      --well-bg: #16171b;            /* Inner well / container */
+      --well-border: rgba(255, 255, 255, 0.07);
+      --well-subtle: #191a20;
+      
+      --text-title: #f4f4f5;          /* Crisp zinc-100 */
+      --text-body: #a1a1aa;           /* Zinc-400 */
+      --text-muted: #71717a;          /* Zinc-500 */
+      
+      /* Buttons in Dark Mode: Rich Tactile Grey Buttons! */
+      --btn-primary-bg: #2b2c32;      /* Rich Tactile Grey button */
+      --btn-primary-hover: #363740;
+      --btn-primary-text: #f4f4f5;
+      --btn-primary-border: rgba(255, 255, 255, 0.14);
+      --btn-primary-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+      
+      --btn-grey-bg: #202126;         /* Secondary Grey button */
+      --btn-grey-hover: #292a32;
+      --btn-grey-text: #d4d4d8;
+      --btn-grey-border: rgba(255, 255, 255, 0.08);
+      
+      --tab-nav-bg: #17181d;
+      --tab-nav-border: rgba(255, 255, 255, 0.08);
+      --tab-active-bg: #282930;       /* Active tab in dark */
+      --tab-active-text: #ffffff;
+      --tab-active-border: rgba(255, 255, 255, 0.16);
+      --tab-active-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      --tab-inactive-text: #a1a1aa;
+      --tab-inactive-hover: rgba(255, 255, 255, 0.05);
+      
+      --input-bg: #16171b;
+      --input-text: #f4f4f5;
+      --input-border: rgba(255, 255, 255, 0.1);
+      --input-focus: rgba(255, 255, 255, 0.35);
+      
+      --code-bg: #15161a;
+      --code-text: #e4e4e7;
+      --code-border: rgba(255, 255, 255, 0.08);
+      
+      --table-header-bg: #17181d;
+      --table-row-hover: rgba(255, 255, 255, 0.03);
+      --table-border: rgba(255, 255, 255, 0.06);
+      
+      --chart-grid: rgba(255, 255, 255, 0.06);
+      --chart-tick: #a1a1aa;
+      --scrollbar-thumb: rgba(255, 255, 255, 0.16);
+    }
+
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--canvas-bg);
+      color: var(--text-body);
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
+    
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
-    /* Glassmorphism Cards */
-    .glass-card {
-      background: rgba(17, 23, 38, 0.72);
+
+    /* Core UI Surface Themes */
+    .app-header {
+      background-color: var(--header-bg);
+      border-color: var(--header-border);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .card-theme {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .glass-card:hover {
-      border-color: rgba(56, 189, 248, 0.25);
+    .card-theme:hover {
+      border-color: var(--card-hover-border);
     }
-    .light .glass-card {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(226, 232, 240, 0.9);
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    .well-theme {
+      background-color: var(--well-bg);
+      border: 1px solid var(--well-border);
     }
-    .light .glass-card:hover {
-      border-color: rgba(14, 165, 233, 0.4);
+    .well-subtle {
+      background-color: var(--well-subtle);
+      border: 1px solid var(--well-border);
     }
-    /* Ambient Glow on Card Corners */
-    .glow-corner {
-      position: absolute;
-      top: -20px;
-      right: -20px;
-      width: 80px;
-      height: 80px;
-      background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
-      pointer-events: none;
+    .input-theme {
+      background-color: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--input-text);
+      transition: border-color 0.15s ease;
     }
+    .input-theme:focus {
+      outline: none;
+      border-color: var(--input-focus);
+    }
+    .code-theme {
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      border: 1px solid var(--code-border);
+    }
+
+    /* Text Color Tokens */
+    .text-title-theme {
+      color: var(--text-title);
+    }
+    .text-body-theme {
+      color: var(--text-body);
+    }
+    .text-muted-theme {
+      color: var(--text-muted);
+    }
+
+    /* Tactile Grey Buttons (The signature Linear / Vercel dark mode look) */
+    .btn-tactile-grey {
+      background-color: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+      border: 1px solid var(--btn-primary-border);
+      box-shadow: var(--btn-primary-shadow);
+      transition: all 0.15s ease;
+    }
+    .btn-tactile-grey:hover {
+      background-color: var(--btn-primary-hover);
+      transform: translateY(-1px);
+    }
+    .btn-tactile-grey:active {
+      transform: translateY(0);
+    }
+
+    .btn-subtle-grey {
+      background-color: var(--btn-grey-bg);
+      color: var(--btn-grey-text);
+      border: 1px solid var(--btn-grey-border);
+      transition: all 0.15s ease;
+    }
+    .btn-subtle-grey:hover {
+      background-color: var(--btn-grey-hover);
+      color: var(--text-title);
+    }
+
+    /* Contrasting Pill for Special Hero Action */
+    .btn-contrast-hero {
+      background: linear-gradient(135deg, #f59e0b 0%, #eab308 100%);
+      color: #09090b;
+      font-weight: 800;
+      box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.28);
+      transition: all 0.15s ease;
+    }
+    .btn-contrast-hero:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    /* Navigation Tab Pills */
+    .nav-tabs-wrapper {
+      background-color: var(--tab-nav-bg);
+      border: 1px solid var(--tab-nav-border);
+    }
+    .tab-pill-active {
+      background-color: var(--tab-active-bg) !important;
+      color: var(--tab-active-text) !important;
+      border: 1px solid var(--tab-active-border) !important;
+      box-shadow: var(--tab-active-shadow) !important;
+      font-weight: 600;
+    }
+    .tab-pill-inactive {
+      background-color: transparent !important;
+      color: var(--tab-inactive-text) !important;
+      border: 1px solid transparent !important;
+      box-shadow: none !important;
+    }
+    .tab-pill-inactive:hover {
+      color: var(--text-title) !important;
+      background-color: var(--tab-inactive-hover) !important;
+    }
+
     /* Custom Scrollbars */
     ::-webkit-scrollbar {
       width: 6px;
@@ -110,83 +288,80 @@
       background: transparent;
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.15);
+      background: var(--scrollbar-thumb);
       border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(56, 189, 248, 0.3);
     }
   </style>
 </head>
-<body class="bg-surface-darker text-slate-100 min-h-screen transition-colors duration-200 antialiased selection:bg-brand-500/30 selection:text-brand-300">
+<body class="min-h-screen antialiased selection:bg-zinc-500/20">
 
   <!-- ==================== TOP NAVIGATION BAR ==================== -->
-  <header class="sticky top-0 z-40 border-b border-surface-border bg-surface-dark/85 backdrop-blur-xl px-5 py-3 transition-colors duration-200">
+  <header class="sticky top-0 z-40 border-b app-header px-5 py-3 transition-colors duration-200">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
       
       <!-- Brand & Status Identity -->
       <div class="flex items-center space-x-3.5">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 via-brand-600 to-cyan-300 flex items-center justify-center shadow-lg shadow-sky-500/20 ring-1 ring-white/20">
-          <i data-lucide="layers" class="w-5 h-5 text-slate-950 font-bold"></i>
+        <div class="w-10 h-10 rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 flex items-center justify-center shadow-md ring-1 ring-black/5 dark:ring-white/20">
+          <i data-lucide="layers" class="w-5 h-5 font-bold"></i>
         </div>
         <div>
           <div class="flex items-center space-x-2.5">
-            <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-sky-300 bg-clip-text text-transparent">
+            <span class="font-extrabold text-lg tracking-tight text-title-theme">
               Brightloop Software
             </span>
-            <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/25 tracking-wide">
+            <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full well-theme text-body-theme tracking-wide">
               Odoo Combat Winner v3.0
             </span>
           </div>
-          <div class="flex items-center space-x-2 text-[11px] text-slate-400">
+          <div class="flex items-center space-x-2 text-[11px] text-muted-theme">
             <span>Recurring Billing Commercial Engine</span>
-            <span class="text-slate-600">•</span>
-            <span class="font-mono text-emerald-400 flex items-center space-x-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>•</span>
+            <span class="font-mono text-emerald-600 dark:text-emerald-400 flex items-center space-x-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>FastAPI Port 8000</span>
             </span>
           </div>
         </div>
       </div>
 
-      <!-- Navigation Tabs (Stripe / Linear Pill Style) -->
-      <nav class="hidden lg:flex items-center space-x-1 bg-surface-card p-1 rounded-xl border border-surface-border">
-        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center space-x-2 bg-brand-500 text-white shadow-md shadow-brand-500/25">
+      <!-- Navigation Tabs (Linear / Stripe Pill Style) -->
+      <nav class="hidden lg:flex items-center space-x-1 nav-tabs-wrapper p-1 rounded-xl">
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-2 rounded-lg text-xs transition-all flex items-center space-x-2 tab-pill-active">
           <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i>
           <span>Executive Dashboard</span>
         </button>
-        <button onclick="switchTab('operations')" id="tab-operations" class="tab-btn px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all flex items-center space-x-2">
+        <button onclick="switchTab('operations')" id="tab-operations" class="tab-btn px-4 py-2 rounded-lg text-xs transition-all flex items-center space-x-2 tab-pill-inactive">
           <i data-lucide="briefcase" class="w-3.5 h-3.5"></i>
           <span>Commercial Operations</span>
         </button>
-        <button onclick="switchTab('customer')" id="tab-customer" class="tab-btn px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all flex items-center space-x-2">
+        <button onclick="switchTab('customer')" id="tab-customer" class="tab-btn px-4 py-2 rounded-lg text-xs transition-all flex items-center space-x-2 tab-pill-inactive">
           <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
           <span>Customer Portal</span>
         </button>
-        <button onclick="switchTab('judge-demo')" id="tab-judge-demo" class="tab-btn px-4 py-2 rounded-lg text-xs font-semibold text-amber-400 hover:text-amber-300 transition-all flex items-center space-x-2">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 fill-amber-400/20"></i>
+        <button onclick="switchTab('judge-demo')" id="tab-judge-demo" class="tab-btn px-4 py-2 rounded-lg text-xs font-semibold text-amber-500 hover:text-amber-400 transition-all flex items-center space-x-2">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 fill-amber-500/20"></i>
           <span>Judge Acceptance Suite</span>
         </button>
       </nav>
 
       <!-- Right Utility Actions -->
       <div class="flex items-center space-x-2.5">
-        <!-- Quick Search Pill / Command Shortcut -->
-        <button onclick="openCommandPalette()" class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-surface-card border border-surface-border hover:border-brand-500/30 text-slate-400 hover:text-slate-200 text-xs transition-all">
+        <!-- Quick Search Pill / Command Shortcut (⌘K) -->
+        <button onclick="openCommandPalette()" class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg btn-subtle-grey text-xs">
           <i data-lucide="search" class="w-3.5 h-3.5"></i>
           <span>Quick Actions</span>
-          <kbd class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">⌘K</kbd>
+          <kbd class="text-[10px] font-mono px-1.5 py-0.5 rounded well-theme text-muted-theme">⌘K</kbd>
         </button>
 
         <!-- Latency SLA Badge -->
-        <div class="hidden md:flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono">
-          <i data-lucide="gauge" class="w-3 h-3 text-sky-400"></i>
-          <span class="text-slate-400">SLA:</span>
-          <span id="nav-latency" class="text-emerald-400 font-bold">14 ms</span>
+        <div class="hidden md:flex items-center space-x-1.5 px-3 py-1 rounded-full well-theme text-xs font-mono">
+          <i data-lucide="gauge" class="w-3 h-3 text-muted-theme"></i>
+          <span class="text-muted-theme">SLA:</span>
+          <span id="nav-latency" class="text-emerald-600 dark:text-emerald-400 font-bold">14 ms</span>
         </div>
 
-        <!-- Light / Dark Theme Switcher -->
-        <button onclick="toggleTheme()" class="p-2 rounded-lg border border-surface-border bg-surface-card hover:bg-slate-800/80 text-slate-300 hover:text-white transition-colors" title="Toggle Light/Dark Theme">
+        <!-- Light / Dark Theme Switcher (Rich White & Light Black) -->
+        <button onclick="toggleTheme()" class="p-2 rounded-lg btn-subtle-grey" title="Toggle Pure White / Light Black Theme">
           <i data-lucide="sun" id="theme-icon" class="w-4 h-4"></i>
         </button>
       </div>
@@ -195,11 +370,11 @@
   </header>
 
   <!-- Mobile Sub-Navigation -->
-  <div class="lg:hidden flex border-b border-surface-border bg-surface-dark px-4 py-2.5 space-x-2 overflow-x-auto text-xs">
-    <button onclick="switchTab('dashboard')" class="px-3.5 py-1.5 rounded-lg bg-brand-500 text-white font-semibold whitespace-nowrap">Dashboard</button>
-    <button onclick="switchTab('operations')" class="px-3.5 py-1.5 rounded-lg bg-surface-card text-slate-300 whitespace-nowrap">Operations</button>
-    <button onclick="switchTab('customer')" class="px-3.5 py-1.5 rounded-lg bg-surface-card text-slate-300 whitespace-nowrap">Customer Portal</button>
-    <button onclick="switchTab('judge-demo')" class="px-3.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 font-semibold whitespace-nowrap">Judge Acceptance</button>
+  <div class="lg:hidden flex border-b app-header px-4 py-2.5 space-x-2 overflow-x-auto text-xs">
+    <button onclick="switchTab('dashboard')" class="px-3.5 py-1.5 rounded-lg btn-tactile-grey font-semibold whitespace-nowrap">Dashboard</button>
+    <button onclick="switchTab('operations')" class="px-3.5 py-1.5 rounded-lg btn-subtle-grey whitespace-nowrap">Operations</button>
+    <button onclick="switchTab('customer')" class="px-3.5 py-1.5 rounded-lg btn-subtle-grey whitespace-nowrap">Customer Portal</button>
+    <button onclick="switchTab('judge-demo')" class="px-3.5 py-1.5 rounded-lg bg-amber-500/10 text-amber-500 border border-amber-500/30 font-semibold whitespace-nowrap">Judge Acceptance</button>
   </div>
 
   <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
@@ -214,81 +389,79 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div class="flex items-center space-x-2">
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Executive Financial Dashboard</h1>
-            <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">Live SQL</span>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-title-theme">Executive Financial Dashboard</h1>
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">Live SQL</span>
           </div>
-          <p class="text-sm text-slate-400 mt-1">Real-time normalized recurring revenue, cash collections, and overdue aging buckets.</p>
+          <p class="text-sm text-muted-theme mt-1">Real-time normalized recurring revenue, cash collections, and overdue aging buckets.</p>
         </div>
 
         <div class="flex items-center space-x-3">
-          <div class="text-xs font-mono px-3 py-1.5 rounded-lg bg-surface-card border border-surface-border text-sky-400 flex items-center space-x-2">
+          <div class="text-xs font-mono px-3 py-1.5 rounded-lg well-theme text-muted-theme flex items-center space-x-2">
             <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-            <span>Latency SLA: <strong id="dash-latency" class="text-white font-bold">14 ms</strong> (< 2000ms SLA)</span>
+            <span>Latency SLA: <strong id="dash-latency" class="text-title-theme font-bold">14 ms</strong> (&lt; 2000ms SLA)</span>
           </div>
-          <button onclick="triggerMassBilling()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-500 to-blue-600 hover:from-brand-400 hover:to-blue-500 text-white text-xs font-bold shadow-lg shadow-brand-500/25 transition-all flex items-center space-x-2">
+          <!-- Tactile Grey Button for Mass Billing -->
+          <button onclick="triggerMassBilling()" class="px-4 py-2 rounded-xl btn-tactile-grey text-xs font-semibold flex items-center space-x-2">
             <i data-lucide="play-circle" class="w-4 h-4"></i>
             <span>Run Mass Billing Run</span>
           </button>
-          <button onclick="refreshDashboard()" class="p-2 rounded-xl bg-surface-card border border-surface-border hover:bg-slate-800 text-slate-300 transition-colors" title="Refresh Dashboard">
+          <button onclick="refreshDashboard()" class="p-2 rounded-xl btn-subtle-grey" title="Refresh Dashboard">
             <i data-lucide="refresh-cw" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
 
-      <!-- 4 Core Executive KPI Cards (Stripe / Lago Inspired) -->
+      <!-- 4 Core Executive KPI Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         <!-- MRR -->
-        <div class="glass-card rounded-2xl p-5 relative overflow-hidden group">
-          <div class="glow-corner"></div>
-          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+        <div class="card-theme rounded-2xl p-5 relative overflow-hidden group">
+          <div class="flex items-center justify-between text-muted-theme text-xs font-medium">
             <span>Monthly Recurring Revenue</span>
-            <div class="p-2 rounded-xl bg-brand-500/10 text-brand-400 group-hover:scale-110 transition-transform">
-              <i data-lucide="trending-up" class="w-4 h-4"></i>
+            <div class="p-2 rounded-xl well-theme group-hover:scale-105 transition-transform">
+              <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
             </div>
           </div>
           <div class="mt-3">
-            <span class="text-3xl font-extrabold tracking-tight text-white font-mono" id="kpi-mrr">$0.00</span>
+            <span class="text-3xl font-extrabold tracking-tight text-title-theme font-mono" id="kpi-mrr">$0.00</span>
           </div>
-          <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/60">
+          <div class="mt-2.5 flex items-center justify-between text-[11px] text-muted-theme pt-2 border-t" style="border-color: var(--well-border)">
             <span>Normalized Run-Rate</span>
-            <span class="text-emerald-400 font-semibold font-mono">30.4d / 4.3w</span>
+            <span class="text-emerald-600 dark:text-emerald-400 font-semibold font-mono">30.4d / 4.3w</span>
           </div>
         </div>
 
         <!-- ARR -->
-        <div class="glass-card rounded-2xl p-5 relative overflow-hidden group">
-          <div class="glow-corner"></div>
-          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+        <div class="card-theme rounded-2xl p-5 relative overflow-hidden group">
+          <div class="flex items-center justify-between text-muted-theme text-xs font-medium">
             <span>Annual Run-Rate (ARR)</span>
-            <div class="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 group-hover:scale-110 transition-transform">
-              <i data-lucide="calendar" class="w-4 h-4"></i>
+            <div class="p-2 rounded-xl well-theme group-hover:scale-105 transition-transform">
+              <i data-lucide="calendar" class="w-4 h-4 text-zinc-600 dark:text-zinc-400"></i>
             </div>
           </div>
           <div class="mt-3">
-            <span class="text-3xl font-extrabold tracking-tight text-white font-mono" id="kpi-arr">$0.00</span>
+            <span class="text-3xl font-extrabold tracking-tight text-title-theme font-mono" id="kpi-arr">$0.00</span>
           </div>
-          <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/60">
+          <div class="mt-2.5 flex items-center justify-between text-[11px] text-muted-theme pt-2 border-t" style="border-color: var(--well-border)">
             <span>Formula</span>
-            <span class="text-indigo-400 font-mono font-semibold">= MRR × 12.0</span>
+            <span class="text-title-theme font-mono font-semibold">= MRR × 12.0</span>
           </div>
         </div>
 
         <!-- Cash Collected MTD -->
-        <div class="glass-card rounded-2xl p-5 relative overflow-hidden group">
-          <div class="glow-corner"></div>
-          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+        <div class="card-theme rounded-2xl p-5 relative overflow-hidden group">
+          <div class="flex items-center justify-between text-muted-theme text-xs font-medium">
             <span>Cash Collected (MTD)</span>
-            <div class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition-transform">
-              <i data-lucide="wallet" class="w-4 h-4"></i>
+            <div class="p-2 rounded-xl well-theme group-hover:scale-105 transition-transform">
+              <i data-lucide="wallet" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
             </div>
           </div>
           <div class="mt-3">
-            <span class="text-3xl font-extrabold tracking-tight text-white font-mono" id="kpi-cash">$0.00</span>
+            <span class="text-3xl font-extrabold tracking-tight text-title-theme font-mono" id="kpi-cash">$0.00</span>
           </div>
-          <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/60">
+          <div class="mt-2.5 flex items-center justify-between text-[11px] text-muted-theme pt-2 border-t" style="border-color: var(--well-border)">
             <span>Reconciliation</span>
-            <span class="text-emerald-400 flex items-center space-x-1 font-semibold">
+            <span class="text-emerald-600 dark:text-emerald-400 flex items-center space-x-1 font-semibold">
               <i data-lucide="check-circle-2" class="w-3 h-3"></i>
               <span>100% Settled</span>
             </span>
@@ -296,21 +469,20 @@
         </div>
 
         <!-- Overdue Receivables -->
-        <div class="glass-card rounded-2xl p-5 relative overflow-hidden group">
-          <div class="glow-corner"></div>
-          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+        <div class="card-theme rounded-2xl p-5 relative overflow-hidden group">
+          <div class="flex items-center justify-between text-muted-theme text-xs font-medium">
             <span>Overdue Receivables</span>
-            <div class="p-2 rounded-xl bg-rose-500/10 text-rose-400 group-hover:scale-110 transition-transform">
-              <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+            <div class="p-2 rounded-xl well-theme group-hover:scale-105 transition-transform">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i>
             </div>
           </div>
           <div class="mt-3 flex items-baseline space-x-2">
-            <span class="text-3xl font-extrabold tracking-tight text-rose-400 font-mono" id="kpi-overdue-total">$0.00</span>
-            <span class="text-xs text-slate-400">(<span id="kpi-overdue-count" class="font-bold">0</span> inv)</span>
+            <span class="text-3xl font-extrabold tracking-tight text-rose-500 font-mono" id="kpi-overdue-total">$0.00</span>
+            <span class="text-xs text-muted-theme">(<span id="kpi-overdue-count" class="font-bold">0</span> inv)</span>
           </div>
-          <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/60">
+          <div class="mt-2.5 flex items-center justify-between text-[11px] text-muted-theme pt-2 border-t" style="border-color: var(--well-border)">
             <span>Total Accounts Rec.</span>
-            <span id="kpi-ar" class="text-white font-mono font-bold">$0.00</span>
+            <span id="kpi-ar" class="text-title-theme font-mono font-bold">$0.00</span>
           </div>
         </div>
 
@@ -320,61 +492,61 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Overdue Aging Buckets (Odoo Invariant) -->
-        <div class="glass-card rounded-2xl p-6 lg:col-span-2 space-y-4">
+        <div class="card-theme rounded-2xl p-6 lg:col-span-2 space-y-4">
           <div class="flex items-center justify-between">
             <div>
-              <h2 class="text-base font-bold text-white flex items-center space-x-2">
+              <h2 class="text-base font-bold text-title-theme flex items-center space-x-2">
                 <span>Overdue Aging Buckets</span>
-                <span class="text-xs font-mono font-normal text-sky-400 px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/20">Odoo Core Invariant</span>
+                <span class="text-xs font-mono font-normal well-theme px-2 py-0.5 rounded text-muted-theme">Odoo Core Invariant</span>
               </h2>
-              <p class="text-xs text-slate-400 mt-0.5">Automated segmentation of outstanding debt across delinquency windows.</p>
+              <p class="text-xs text-muted-theme mt-0.5">Automated segmentation of outstanding debt across delinquency windows.</p>
             </div>
-            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-300 font-mono">
+            <span class="text-xs px-2.5 py-1 rounded-full well-theme text-muted-theme font-mono">
               Real-time Aggregation
             </span>
           </div>
 
           <!-- Aging 4-Card Breakdown -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-            <div class="p-4 rounded-xl bg-slate-900/80 border border-sky-500/20 space-y-1">
-              <div class="flex justify-between items-center text-xs font-medium text-sky-400">
+            <div class="p-4 rounded-xl well-theme space-y-1">
+              <div class="flex justify-between items-center text-xs font-medium text-muted-theme">
                 <span>1 – 30 Days</span>
-                <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                <span class="w-2 h-2 rounded-full bg-zinc-400"></span>
               </div>
-              <div class="text-xl font-extrabold text-white font-mono" id="bucket-1-30">$0.00</div>
-              <p class="text-[10px] text-slate-500 font-medium">Early Friendly Email</p>
+              <div class="text-xl font-extrabold text-title-theme font-mono" id="bucket-1-30">$0.00</div>
+              <p class="text-[10px] text-muted-theme font-medium">Early Friendly Email</p>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-900/80 border border-amber-500/20 space-y-1">
-              <div class="flex justify-between items-center text-xs font-medium text-amber-400">
+            <div class="p-4 rounded-xl well-theme space-y-1">
+              <div class="flex justify-between items-center text-xs font-medium text-amber-500">
                 <span>31 – 60 Days</span>
-                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
               </div>
-              <div class="text-xl font-extrabold text-white font-mono" id="bucket-31-60">$0.00</div>
-              <p class="text-[10px] text-slate-500 font-medium">Formal Dunning Notice</p>
+              <div class="text-xl font-extrabold text-title-theme font-mono" id="bucket-31-60">$0.00</div>
+              <p class="text-[10px] text-muted-theme font-medium">Formal Dunning Notice</p>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-900/80 border border-orange-500/20 space-y-1">
-              <div class="flex justify-between items-center text-xs font-medium text-orange-400">
+            <div class="p-4 rounded-xl well-theme space-y-1">
+              <div class="flex justify-between items-center text-xs font-medium text-orange-500">
                 <span>61 – 90 Days</span>
-                <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+                <span class="w-2 h-2 rounded-full bg-orange-500"></span>
               </div>
-              <div class="text-xl font-extrabold text-white font-mono" id="bucket-61-90">$0.00</div>
-              <p class="text-[10px] text-slate-500 font-medium">Service Hold & Pause</p>
+              <div class="text-xl font-extrabold text-title-theme font-mono" id="bucket-61-90">$0.00</div>
+              <p class="text-[10px] text-muted-theme font-medium">Service Hold & Pause</p>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-900/80 border border-rose-500/30 space-y-1">
-              <div class="flex justify-between items-center text-xs font-medium text-rose-400">
+            <div class="p-4 rounded-xl well-theme space-y-1">
+              <div class="flex justify-between items-center text-xs font-medium text-rose-500">
                 <span>90+ Days</span>
-                <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
               </div>
-              <div class="text-xl font-extrabold text-white font-mono" id="bucket-90-plus">$0.00</div>
-              <p class="text-[10px] text-slate-500 font-medium">Collections Escalation</p>
+              <div class="text-xl font-extrabold text-title-theme font-mono" id="bucket-90-plus">$0.00</div>
+              <p class="text-[10px] text-muted-theme font-medium">Collections Escalation</p>
             </div>
           </div>
 
           <!-- Aging Chart -->
-          <div class="mt-4 pt-4 border-t border-slate-800">
+          <div class="mt-4 pt-4 border-t" style="border-color: var(--well-border)">
             <div class="h-44">
               <canvas id="agingChart"></canvas>
             </div>
@@ -382,13 +554,13 @@
         </div>
 
         <!-- Plan Distribution Doughnut -->
-        <div class="glass-card rounded-2xl p-6 space-y-4">
+        <div class="card-theme rounded-2xl p-6 space-y-4">
           <div class="flex items-center justify-between">
             <div>
-              <h2 class="text-base font-bold text-white">Plan Distribution</h2>
-              <p class="text-xs text-slate-400">Active customer subscriptions by tier.</p>
+              <h2 class="text-base font-bold text-title-theme">Plan Distribution</h2>
+              <p class="text-xs text-muted-theme">Active customer subscriptions by tier.</p>
             </div>
-            <div class="text-xs text-brand-400 font-mono font-semibold" id="kpi-active-subs">0 Active</div>
+            <div class="text-xs text-title-theme font-mono font-semibold" id="kpi-active-subs">0 Active</div>
           </div>
 
           <div class="h-48 flex items-center justify-center relative">
@@ -413,41 +585,42 @@
       <!-- Operations Header & Action Modals -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Commercial Operations Hub</h1>
-          <p class="text-sm text-slate-400 mt-1">Manage Products, Brand Surcharges, Recurrence Plans, Quotations & Invoice Settlements.</p>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-title-theme">Commercial Operations Hub</h1>
+          <p class="text-sm text-muted-theme mt-1">Manage Products, Brand Surcharges, Recurrence Plans, Quotations & Invoice Settlements.</p>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <button onclick="openModal('modal-create-plan')" class="px-3.5 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-white text-xs font-bold shadow-md shadow-brand-500/20 transition-all flex items-center space-x-1.5">
+          <!-- Tactile Grey Buttons for Primary Actions -->
+          <button onclick="openModal('modal-create-plan')" class="px-3.5 py-2 rounded-xl btn-tactile-grey text-xs font-semibold flex items-center space-x-1.5">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             <span>+ New Billing Plan</span>
           </button>
           
-          <button onclick="openModal('modal-create-product')" class="px-3.5 py-2 rounded-xl bg-surface-card border border-surface-border hover:border-brand-500/30 text-slate-200 text-xs font-semibold transition-all flex items-center space-x-1.5">
-            <i data-lucide="package-plus" class="w-3.5 h-3.5 text-sky-400"></i>
+          <button onclick="openModal('modal-create-product')" class="px-3.5 py-2 rounded-xl btn-subtle-grey text-xs font-semibold flex items-center space-x-1.5">
+            <i data-lucide="package-plus" class="w-3.5 h-3.5"></i>
             <span>+ Brand Variant Product</span>
           </button>
 
-          <button onclick="openModal('modal-create-quotation')" class="px-3.5 py-2 rounded-xl bg-surface-card border border-surface-border hover:border-brand-500/30 text-slate-200 text-xs font-semibold transition-all flex items-center space-x-1.5">
-            <i data-lucide="file-plus-2" class="w-3.5 h-3.5 text-amber-400"></i>
+          <button onclick="openModal('modal-create-quotation')" class="px-3.5 py-2 rounded-xl btn-subtle-grey text-xs font-semibold flex items-center space-x-1.5">
+            <i data-lucide="file-plus-2" class="w-3.5 h-3.5 text-amber-500"></i>
             <span>+ Create Quotation</span>
           </button>
         </div>
       </div>
 
       <!-- Quick Search & Status Filter Pill Bar -->
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-2xl bg-surface-card border border-surface-border">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-2xl card-theme">
         <div class="relative flex-1 max-w-md">
-          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
-          <input type="text" id="operations-search" oninput="filterOperationsTables()" placeholder="Search subscriptions, customers, invoice #..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-brand-500">
+          <i data-lucide="search" class="w-4 h-4 text-muted-theme absolute left-3 top-2.5"></i>
+          <input type="text" id="operations-search" oninput="filterOperationsTables()" placeholder="Search subscriptions, customers, invoice #..." class="w-full input-theme rounded-xl pl-9 pr-4 py-1.5 text-xs placeholder:text-muted-theme">
         </div>
 
         <div class="flex items-center space-x-1.5 text-xs overflow-x-auto">
-          <button onclick="filterByState('all')" class="state-filter-pill px-3 py-1 rounded-lg bg-brand-500 text-white font-semibold">All</button>
-          <button onclick="filterByState('active')" class="state-filter-pill px-3 py-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white">Active</button>
-          <button onclick="filterByState('quotation')" class="state-filter-pill px-3 py-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white">Quotation</button>
-          <button onclick="filterByState('paused')" class="state-filter-pill px-3 py-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white">Paused</button>
-          <button onclick="filterByState('closed')" class="state-filter-pill px-3 py-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white">Closed</button>
+          <button onclick="filterByState('all')" class="state-filter-pill px-3 py-1 rounded-lg btn-tactile-grey font-semibold">All</button>
+          <button onclick="filterByState('active')" class="state-filter-pill px-3 py-1 rounded-lg btn-subtle-grey text-muted-theme">Active</button>
+          <button onclick="filterByState('quotation')" class="state-filter-pill px-3 py-1 rounded-lg btn-subtle-grey text-muted-theme">Quotation</button>
+          <button onclick="filterByState('paused')" class="state-filter-pill px-3 py-1 rounded-lg btn-subtle-grey text-muted-theme">Paused</button>
+          <button onclick="filterByState('closed')" class="state-filter-pill px-3 py-1 rounded-lg btn-subtle-grey text-muted-theme">Closed</button>
         </div>
       </div>
 
@@ -455,15 +628,15 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- Active Subscriptions Table -->
-        <div class="glass-card rounded-2xl p-5 space-y-4">
+        <div class="card-theme rounded-2xl p-5 space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <div class="p-1.5 rounded-lg bg-brand-500/10 text-brand-400">
+              <div class="p-1.5 rounded-lg well-theme text-title-theme">
                 <i data-lucide="repeat" class="w-4 h-4"></i>
               </div>
-              <h3 class="font-bold text-sm text-white">Subscriptions Master Ledger</h3>
+              <h3 class="font-bold text-sm text-title-theme">Subscriptions Master Ledger</h3>
             </div>
-            <button onclick="loadSubscriptions()" class="text-xs text-brand-400 hover:text-brand-300 font-medium flex items-center space-x-1">
+            <button onclick="loadSubscriptions()" class="text-xs text-muted-theme hover:text-title-theme font-medium flex items-center space-x-1">
               <i data-lucide="refresh-cw" class="w-3 h-3"></i>
               <span>Refresh</span>
             </button>
@@ -471,7 +644,7 @@
 
           <div class="overflow-x-auto">
             <table class="w-full text-xs text-left">
-              <thead class="text-slate-400 border-b border-surface-border">
+              <thead class="text-muted-theme border-b" style="border-color: var(--well-border)">
                 <tr>
                   <th class="py-2.5 font-semibold">Subscription #</th>
                   <th class="font-semibold">Customer</th>
@@ -480,23 +653,23 @@
                   <th class="font-semibold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody id="sub-table-body" class="divide-y divide-slate-800/60 font-mono">
-                <tr><td colspan="5" class="py-6 text-center text-slate-500">Loading subscriptions...</td></tr>
+              <tbody id="sub-table-body" class="divide-y font-mono" style="border-color: var(--well-border)">
+                <tr><td colspan="5" class="py-6 text-center text-muted-theme">Loading subscriptions...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
 
         <!-- Invoices & Reconciliation Table -->
-        <div class="glass-card rounded-2xl p-5 space-y-4">
+        <div class="card-theme rounded-2xl p-5 space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <div class="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400">
+              <div class="p-1.5 rounded-lg well-theme text-title-theme">
                 <i data-lucide="file-text" class="w-4 h-4"></i>
               </div>
-              <h3 class="font-bold text-sm text-white">Invoicing & Settlement Ledger</h3>
+              <h3 class="font-bold text-sm text-title-theme">Invoicing & Settlement Ledger</h3>
             </div>
-            <button onclick="loadInvoices()" class="text-xs text-indigo-400 hover:text-indigo-300 font-medium flex items-center space-x-1">
+            <button onclick="loadInvoices()" class="text-xs text-muted-theme hover:text-title-theme font-medium flex items-center space-x-1">
               <i data-lucide="refresh-cw" class="w-3 h-3"></i>
               <span>Refresh</span>
             </button>
@@ -504,7 +677,7 @@
 
           <div class="overflow-x-auto">
             <table class="w-full text-xs text-left">
-              <thead class="text-slate-400 border-b border-surface-border">
+              <thead class="text-muted-theme border-b" style="border-color: var(--well-border)">
                 <tr>
                   <th class="py-2.5 font-semibold">Invoice #</th>
                   <th class="font-semibold">Status</th>
@@ -513,8 +686,8 @@
                   <th class="font-semibold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody id="invoice-table-body" class="divide-y divide-slate-800/60 font-mono">
-                <tr><td colspan="5" class="py-6 text-center text-slate-500">Loading invoices...</td></tr>
+              <tbody id="invoice-table-body" class="divide-y font-mono" style="border-color: var(--well-border)">
+                <tr><td colspan="5" class="py-6 text-center text-muted-theme">Loading invoices...</td></tr>
               </tbody>
             </table>
           </div>
@@ -534,61 +707,60 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div class="flex items-center space-x-2">
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Customer Self-Service Portal</h1>
-            <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Tenant Scoped</span>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-title-theme">Customer Self-Service Portal</h1>
+            <span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">Tenant Scoped</span>
           </div>
-          <p class="text-sm text-slate-400 mt-1">Inspect your active subscription, download tax invoices, and perform 1-click self-checkout.</p>
+          <p class="text-sm text-muted-theme mt-1">Inspect your active subscription, download tax invoices, and perform 1-click self-checkout.</p>
         </div>
 
-        <div class="flex items-center space-x-2 p-2 rounded-xl bg-surface-card border border-surface-border">
-          <i data-lucide="user" class="w-4 h-4 text-brand-400"></i>
-          <span class="text-xs text-slate-400">Logged in:</span>
-          <span id="cust-logged-email" class="text-xs font-mono font-bold text-sky-400">customer_test@brightloop.com</span>
+        <div class="flex items-center space-x-2 p-2 rounded-xl well-theme">
+          <i data-lucide="user" class="w-4 h-4 text-muted-theme"></i>
+          <span class="text-xs text-muted-theme">Logged in:</span>
+          <span id="cust-logged-email" class="text-xs font-mono font-bold text-title-theme">customer_test@brightloop.com</span>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Active Plan Card -->
-        <div class="glass-card rounded-2xl p-6 lg:col-span-1 space-y-5 border-l-4 border-l-brand-500 relative overflow-hidden">
-          <div class="glow-corner"></div>
+        <div class="card-theme rounded-2xl p-6 lg:col-span-1 space-y-5 relative overflow-hidden border-l-4 border-l-zinc-700 dark:border-l-zinc-300">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-mono px-2 py-0.5 rounded bg-brand-500/15 text-brand-400 font-semibold">Active Plan</span>
-            <i data-lucide="shield-check" class="w-5 h-5 text-brand-400"></i>
+            <span class="text-xs font-mono px-2 py-0.5 rounded well-theme font-semibold text-title-theme">Active Plan</span>
+            <i data-lucide="shield-check" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i>
           </div>
 
           <div>
-            <h3 class="text-xl font-extrabold text-white">Enterprise Odoo ERP Cloud</h3>
-            <p class="text-xs text-slate-400 mt-1">Dedicated cloud instance with Odoo brand variant markup ($1200 + $560 = $1760/mo).</p>
+            <h3 class="text-xl font-extrabold text-title-theme">Enterprise Odoo ERP Cloud</h3>
+            <p class="text-xs text-muted-theme mt-1">Dedicated cloud instance with Odoo brand variant markup ($1200 + $560 = $1760/mo).</p>
           </div>
 
-          <div class="p-4 rounded-xl bg-slate-900/90 text-xs space-y-2 font-mono border border-slate-800">
-            <div class="flex justify-between"><span class="text-slate-400">Billing Cycle:</span><span class="text-white font-semibold">Monthly Recurring</span></div>
-            <div class="flex justify-between"><span class="text-slate-400">Payment Terms:</span><span class="text-white font-semibold">Net 15</span></div>
-            <div class="flex justify-between"><span class="text-slate-400">Next Renewal:</span><span class="text-sky-400 font-semibold">30 Days Remaining</span></div>
-            <div class="flex justify-between pt-1 border-t border-slate-800">
-              <span class="text-slate-400">Status:</span>
-              <span class="text-emerald-400 font-bold flex items-center space-x-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <div class="p-4 rounded-xl well-theme text-xs space-y-2 font-mono">
+            <div class="flex justify-between"><span class="text-muted-theme">Billing Cycle:</span><span class="text-title-theme font-semibold">Monthly Recurring</span></div>
+            <div class="flex justify-between"><span class="text-muted-theme">Payment Terms:</span><span class="text-title-theme font-semibold">Net 15</span></div>
+            <div class="flex justify-between"><span class="text-muted-theme">Next Renewal:</span><span class="text-title-theme font-semibold">30 Days Remaining</span></div>
+            <div class="flex justify-between pt-1 border-t" style="border-color: var(--well-border)">
+              <span class="text-muted-theme">Status:</span>
+              <span class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center space-x-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span>CONFIRMED ACTIVE</span>
               </span>
             </div>
           </div>
 
-          <button onclick="switchTab('operations')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-all flex items-center justify-center space-x-1.5">
+          <button onclick="switchTab('operations')" class="w-full py-2.5 rounded-xl btn-subtle-grey text-xs font-semibold flex items-center justify-center space-x-1.5">
             <i data-lucide="settings" class="w-3.5 h-3.5"></i>
             <span>Modify Plan Settings</span>
           </button>
         </div>
 
         <!-- Customer Unpaid Invoices & 1-Click Checkout -->
-        <div class="glass-card rounded-2xl p-6 lg:col-span-2 space-y-4">
+        <div class="card-theme rounded-2xl p-6 lg:col-span-2 space-y-4">
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-base font-bold text-white">Outstanding Invoices for Payment</h3>
-              <p class="text-xs text-slate-400">Select any confirmed invoice to complete online settlement via simulated UPI / Card.</p>
+              <h3 class="text-base font-bold text-title-theme">Outstanding Invoices for Payment</h3>
+              <p class="text-xs text-muted-theme">Select any confirmed invoice to complete online settlement via simulated UPI / Card.</p>
             </div>
-            <span class="text-xs font-mono text-emerald-400 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30">
+            <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30">
               Zero Leakage MoR Rail
             </span>
           </div>
@@ -609,20 +781,21 @@
     <section id="view-judge-demo" class="space-y-6 hidden">
       
       <!-- Stepper Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 via-brand-500/10 to-indigo-500/10 border border-amber-500/30">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl card-theme border-2 border-amber-500/30">
         <div>
           <div class="flex items-center space-x-2">
-            <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-mono text-xs font-bold border border-amber-500/30">
+            <span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 font-mono text-xs font-bold border border-amber-500/30">
               1-Click Live Test Suite
             </span>
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Hackathon Judge Acceptance Suite</h1>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-title-theme">Hackathon Judge Acceptance Suite</h1>
           </div>
-          <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-2xl">
+          <p class="text-xs sm:text-sm text-muted-theme mt-1 max-w-2xl">
             Executes all 7 core Problem Statement requirements sequentially against real API endpoints with live verified evidence, cryptographic idempotency checks, and sub-50ms SLA verification.
           </p>
         </div>
 
-        <button onclick="runJudgeDemoSequence()" id="btn-run-all-demo" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-extrabold text-xs sm:text-sm shadow-xl shadow-amber-500/25 transition-all flex items-center justify-center space-x-2">
+        <!-- Distinct Hero Action Pill for Judge Verification -->
+        <button onclick="runJudgeDemoSequence()" id="btn-run-all-demo" class="px-6 py-3 rounded-xl btn-contrast-hero text-xs sm:text-sm font-extrabold flex items-center justify-center space-x-2">
           <i data-lucide="play" class="w-4 h-4 fill-current"></i>
           <span>Run 7-Step Hackathon Verification</span>
         </button>
@@ -632,80 +805,80 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="judge-steps-grid">
         
         <!-- Step 1 -->
-        <div id="step-1" class="glass-card rounded-2xl p-5 space-y-2 border-surface-border relative">
+        <div id="step-1" class="card-theme rounded-2xl p-5 space-y-2 relative">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-sky-400 font-mono">STEP 1</span>
-            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-slate-800 text-slate-400">Ready</span>
+            <span class="text-xs font-bold text-muted-theme font-mono">STEP 1</span>
+            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono well-theme text-muted-theme">Ready</span>
           </div>
-          <h4 class="text-sm font-bold text-white">Strict Password Regex Rejection & Approval</h4>
-          <p class="text-xs text-slate-400">Verifies weak password rejection (422) & approval with 9+ chars, upper, lower, symbol.</p>
-          <pre class="step-output text-[11px] font-mono p-3 rounded-xl bg-slate-950 text-slate-300 overflow-x-auto max-h-28 border border-slate-900">Awaiting execution...</pre>
+          <h4 class="text-sm font-bold text-title-theme">Strict Password Regex Rejection & Approval</h4>
+          <p class="text-xs text-muted-theme">Verifies weak password rejection (422) & approval with 9+ chars, upper, lower, symbol.</p>
+          <pre class="step-output text-[11px] font-mono p-3 rounded-xl code-theme overflow-x-auto max-h-28">Awaiting execution...</pre>
         </div>
 
         <!-- Step 2 -->
-        <div id="step-2" class="glass-card rounded-2xl p-5 space-y-2 border-surface-border relative">
+        <div id="step-2" class="card-theme rounded-2xl p-5 space-y-2 relative">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-sky-400 font-mono">STEP 2</span>
-            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-slate-800 text-slate-400">Ready</span>
+            <span class="text-xs font-bold text-muted-theme font-mono">STEP 2</span>
+            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono well-theme text-muted-theme">Ready</span>
           </div>
-          <h4 class="text-sm font-bold text-white">Brand Variant Surcharge Calculation</h4>
-          <p class="text-xs text-slate-400">ERP base price $1,200 + Odoo Brand markup $560 = $1,760 unit price assertion.</p>
-          <pre class="step-output text-[11px] font-mono p-3 rounded-xl bg-slate-950 text-slate-300 overflow-x-auto max-h-28 border border-slate-900">Awaiting execution...</pre>
+          <h4 class="text-sm font-bold text-title-theme">Brand Variant Surcharge Calculation</h4>
+          <p class="text-xs text-muted-theme">ERP base price $1,200 + Odoo Brand markup $560 = $1,760 unit price assertion.</p>
+          <pre class="step-output text-[11px] font-mono p-3 rounded-xl code-theme overflow-x-auto max-h-28">Awaiting execution...</pre>
         </div>
 
         <!-- Step 3 -->
-        <div id="step-3" class="glass-card rounded-2xl p-5 space-y-2 border-surface-border relative">
+        <div id="step-3" class="card-theme rounded-2xl p-5 space-y-2 relative">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-sky-400 font-mono">STEP 3</span>
-            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-slate-800 text-slate-400">Ready</span>
+            <span class="text-xs font-bold text-muted-theme font-mono">STEP 3</span>
+            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono well-theme text-muted-theme">Ready</span>
           </div>
-          <h4 class="text-sm font-bold text-white">Quotation Template Instantiation</h4>
-          <p class="text-xs text-slate-400">Instantiates quote with validity days, payment terms (Net 15), and default line items.</p>
-          <pre class="step-output text-[11px] font-mono p-3 rounded-xl bg-slate-950 text-slate-300 overflow-x-auto max-h-28 border border-slate-900">Awaiting execution...</pre>
+          <h4 class="text-sm font-bold text-title-theme">Quotation Template Instantiation</h4>
+          <p class="text-xs text-muted-theme">Instantiates quote with validity days, payment terms (Net 15), and default line items.</p>
+          <pre class="step-output text-[11px] font-mono p-3 rounded-xl code-theme overflow-x-auto max-h-28">Awaiting execution...</pre>
         </div>
 
         <!-- Step 4 -->
-        <div id="step-4" class="glass-card rounded-2xl p-5 space-y-2 border-surface-border relative">
+        <div id="step-4" class="card-theme rounded-2xl p-5 space-y-2 relative">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-sky-400 font-mono">STEP 4</span>
-            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-slate-800 text-slate-400">Ready</span>
+            <span class="text-xs font-bold text-muted-theme font-mono">STEP 4</span>
+            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono well-theme text-muted-theme">Ready</span>
           </div>
-          <h4 class="text-sm font-bold text-white">Quotation Expiry Policy Guard</h4>
-          <p class="text-xs text-slate-400">Rejects confirmation of expired quotes (HTTP 400); enforces strict commercial margin protection.</p>
-          <pre class="step-output text-[11px] font-mono p-3 rounded-xl bg-slate-950 text-slate-300 overflow-x-auto max-h-28 border border-slate-900">Awaiting execution...</pre>
+          <h4 class="text-sm font-bold text-title-theme">Quotation Expiry Policy Guard</h4>
+          <p class="text-xs text-muted-theme">Rejects confirmation of expired quotes (HTTP 400); enforces strict commercial margin protection.</p>
+          <pre class="step-output text-[11px] font-mono p-3 rounded-xl code-theme overflow-x-auto max-h-28">Awaiting execution...</pre>
         </div>
 
         <!-- Step 5 -->
-        <div id="step-5" class="glass-card rounded-2xl p-5 space-y-2 border-surface-border relative">
+        <div id="step-5" class="card-theme rounded-2xl p-5 space-y-2 relative">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-sky-400 font-mono">STEP 5</span>
-            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-slate-800 text-slate-400">Ready</span>
+            <span class="text-xs font-bold text-muted-theme font-mono">STEP 5</span>
+            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono well-theme text-muted-theme">Ready</span>
           </div>
-          <h4 class="text-sm font-bold text-white">Plan Pause Policy Guard</h4>
-          <p class="text-xs text-slate-400">Blocks pausing if plan.allow_pause is False; enforces business SLA contracts.</p>
-          <pre class="step-output text-[11px] font-mono p-3 rounded-xl bg-slate-950 text-slate-300 overflow-x-auto max-h-28 border border-slate-900">Awaiting execution...</pre>
+          <h4 class="text-sm font-bold text-title-theme">Plan Pause Policy Guard</h4>
+          <p class="text-xs text-muted-theme">Blocks pausing if plan.allow_pause is False; enforces business SLA contracts.</p>
+          <pre class="step-output text-[11px] font-mono p-3 rounded-xl code-theme overflow-x-auto max-h-28">Awaiting execution...</pre>
         </div>
 
         <!-- Step 6 -->
-        <div id="step-6" class="glass-card rounded-2xl p-5 space-y-2 border-surface-border relative">
+        <div id="step-6" class="card-theme rounded-2xl p-5 space-y-2 relative">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-sky-400 font-mono">STEP 6</span>
-            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-slate-800 text-slate-400">Ready</span>
+            <span class="text-xs font-bold text-muted-theme font-mono">STEP 6</span>
+            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono well-theme text-muted-theme">Ready</span>
           </div>
-          <h4 class="text-sm font-bold text-white">Zero Double-Billing Idempotency</h4>
-          <p class="text-xs text-slate-400">Runs billing cycle twice: Run 1 creates 1 invoice; Run 2 creates 0 duplicates via SHA-256 key.</p>
-          <pre class="step-output text-[11px] font-mono p-3 rounded-xl bg-slate-950 text-slate-300 overflow-x-auto max-h-28 border border-slate-900">Awaiting execution...</pre>
+          <h4 class="text-sm font-bold text-title-theme">Zero Double-Billing Idempotency</h4>
+          <p class="text-xs text-muted-theme">Runs billing cycle twice: Run 1 creates 1 invoice; Run 2 creates 0 duplicates via SHA-256 key.</p>
+          <pre class="step-output text-[11px] font-mono p-3 rounded-xl code-theme overflow-x-auto max-h-28">Awaiting execution...</pre>
         </div>
 
         <!-- Step 7 -->
-        <div id="step-7" class="glass-card rounded-2xl p-5 space-y-2 border-surface-border relative md:col-span-2">
+        <div id="step-7" class="card-theme rounded-2xl p-5 space-y-2 relative md:col-span-2">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-sky-400 font-mono">STEP 7</span>
-            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-slate-800 text-slate-400">Ready</span>
+            <span class="text-xs font-bold text-muted-theme font-mono">STEP 7</span>
+            <span class="step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono well-theme text-muted-theme">Ready</span>
           </div>
-          <h4 class="text-sm font-bold text-white">Partial Payment Auto-Settlement & Sub-50ms SLA Dashboard</h4>
-          <p class="text-xs text-slate-400">Pays 40% (remains confirmed), pays 60% (auto-transitions to paid), queries financial summary in <50ms.</p>
-          <pre class="step-output text-[11px] font-mono p-3 rounded-xl bg-slate-950 text-slate-300 overflow-x-auto max-h-28 border border-slate-900">Awaiting execution...</pre>
+          <h4 class="text-sm font-bold text-title-theme">Partial Payment Auto-Settlement & Sub-50ms SLA Dashboard</h4>
+          <p class="text-xs text-muted-theme">Pays 40% (remains confirmed), pays 60% (auto-transitions to paid), queries financial summary in &lt;50ms.</p>
+          <pre class="step-output text-[11px] font-mono p-3 rounded-xl code-theme overflow-x-auto max-h-28">Awaiting execution...</pre>
         </div>
 
       </div>
@@ -718,28 +891,28 @@
   <!-- ==================== MODALS (INTERACTIVE & POLISHED) ==================== -->
 
   <!-- Modal 1: Create Billing Plan -->
-  <div id="modal-create-plan" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md hidden">
-    <div class="glass-card rounded-3xl p-6 sm:p-7 max-w-md w-full space-y-5 border-surface-border">
+  <div id="modal-create-plan" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
+    <div class="card-theme rounded-3xl p-6 sm:p-7 max-w-md w-full space-y-5">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-          <i data-lucide="layers" class="w-5 h-5 text-brand-400"></i>
+        <h3 class="text-lg font-bold text-title-theme flex items-center space-x-2">
+          <i data-lucide="layers" class="w-5 h-5 text-muted-theme"></i>
           <span>Create Billing Plan</span>
         </h3>
-        <button onclick="closeModal('modal-create-plan')" class="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white">
+        <button onclick="closeModal('modal-create-plan')" class="p-1 rounded-lg btn-subtle-grey">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <form id="form-create-plan" onsubmit="handleCreatePlan(event)" class="space-y-4 text-xs">
         <div>
-          <label class="block text-slate-400 font-semibold mb-1">Plan Name</label>
-          <input type="text" id="plan-name" required placeholder="e.g. Enterprise Cloud Annual" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-brand-500">
+          <label class="block text-muted-theme font-semibold mb-1">Plan Name</label>
+          <input type="text" id="plan-name" required placeholder="e.g. Enterprise Cloud Annual" class="w-full input-theme rounded-xl px-3.5 py-2">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-400 font-semibold mb-1">Interval Unit</label>
-            <select id="plan-interval-unit" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-brand-500">
+            <label class="block text-muted-theme font-semibold mb-1">Interval Unit</label>
+            <select id="plan-interval-unit" class="w-full input-theme rounded-xl px-3.5 py-2">
               <option value="monthly" selected>Monthly</option>
               <option value="yearly">Yearly</option>
               <option value="weekly">Weekly</option>
@@ -747,119 +920,119 @@
             </select>
           </div>
           <div>
-            <label class="block text-slate-400 font-semibold mb-1">Interval Count</label>
-            <input type="number" id="plan-interval-count" value="1" min="1" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-brand-500">
+            <label class="block text-muted-theme font-semibold mb-1">Interval Count</label>
+            <input type="number" id="plan-interval-count" value="1" min="1" class="w-full input-theme rounded-xl px-3.5 py-2">
           </div>
         </div>
 
-        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900 border border-slate-800">
+        <div class="flex items-center justify-between p-3 rounded-xl well-theme">
           <div>
-            <span class="block text-white font-semibold">Allow Subscription Pause</span>
-            <span class="block text-[11px] text-slate-500">Enforces pause policy guard invariant</span>
+            <span class="block text-title-theme font-semibold">Allow Subscription Pause</span>
+            <span class="block text-[11px] text-muted-theme">Enforces pause policy guard invariant</span>
           </div>
-          <input type="checkbox" id="plan-allow-pause" checked class="w-4 h-4 text-brand-500 rounded bg-slate-800 border-slate-700 focus:ring-brand-500">
+          <input type="checkbox" id="plan-allow-pause" checked class="w-4 h-4 accent-zinc-700 dark:accent-zinc-300 rounded">
         </div>
 
         <div class="flex justify-end space-x-2 pt-2">
-          <button type="button" onclick="closeModal('modal-create-plan')" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold">Cancel</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-white font-bold shadow-md shadow-brand-500/20">Save Plan</button>
+          <button type="button" onclick="closeModal('modal-create-plan')" class="px-4 py-2 rounded-xl btn-subtle-grey font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl btn-tactile-grey font-bold">Save Plan</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Modal 2: Create Product with Brand Variant Surcharge Calculator -->
-  <div id="modal-create-product" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md hidden">
-    <div class="glass-card rounded-3xl p-6 sm:p-7 max-w-lg w-full space-y-5 border-surface-border">
+  <div id="modal-create-product" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
+    <div class="card-theme rounded-3xl p-6 sm:p-7 max-w-lg w-full space-y-5">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-          <i data-lucide="package" class="w-5 h-5 text-sky-400"></i>
+        <h3 class="text-lg font-bold text-title-theme flex items-center space-x-2">
+          <i data-lucide="package" class="w-5 h-5 text-muted-theme"></i>
           <span>New Product with Brand Variant</span>
         </h3>
-        <button onclick="closeModal('modal-create-product')" class="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white">
+        <button onclick="closeModal('modal-create-product')" class="p-1 rounded-lg btn-subtle-grey">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <form id="form-create-product" onsubmit="handleCreateProduct(event)" class="space-y-4 text-xs">
         <div>
-          <label class="block text-slate-400 font-semibold mb-1">Product Name</label>
-          <input type="text" id="prod-name" required value="Enterprise ERP Suite" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-brand-500">
+          <label class="block text-muted-theme font-semibold mb-1">Product Name</label>
+          <input type="text" id="prod-name" required value="Enterprise ERP Suite" class="w-full input-theme rounded-xl px-3.5 py-2">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-400 font-semibold mb-1">Base Sales Price ($)</label>
-            <input type="number" id="prod-base-price" step="0.01" value="1200.00" oninput="updateSurchargeCalculator()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-white font-mono focus:outline-none focus:border-brand-500">
+            <label class="block text-muted-theme font-semibold mb-1">Base Sales Price ($)</label>
+            <input type="number" id="prod-base-price" step="0.01" value="1200.00" oninput="updateSurchargeCalculator()" class="w-full input-theme rounded-xl px-3.5 py-2 font-mono">
           </div>
           <div>
-            <label class="block text-slate-400 font-semibold mb-1">Cost Price ($)</label>
-            <input type="number" id="prod-cost-price" step="0.01" value="400.00" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-white font-mono focus:outline-none focus:border-brand-500">
+            <label class="block text-muted-theme font-semibold mb-1">Cost Price ($)</label>
+            <input type="number" id="prod-cost-price" step="0.01" value="400.00" class="w-full input-theme rounded-xl px-3.5 py-2 font-mono">
           </div>
         </div>
 
-        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
+        <div class="p-3.5 rounded-xl well-theme space-y-3">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-sky-400 text-xs">Brand Variant Specifics</span>
-            <span class="text-[10px] text-slate-500 font-mono">Odoo Requirement</span>
+            <span class="font-bold text-title-theme text-xs">Brand Variant Specifics</span>
+            <span class="text-[10px] text-muted-theme font-mono">Odoo Requirement</span>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-slate-400 font-semibold mb-1">Variant Name</label>
-              <input type="text" id="prod-variant-name" value="Odoo Brand Edition" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-white">
+              <label class="block text-muted-theme font-semibold mb-1">Variant Name</label>
+              <input type="text" id="prod-variant-name" value="Odoo Brand Edition" class="w-full input-theme rounded-xl px-3 py-1.5">
             </div>
             <div>
-              <label class="block text-slate-400 font-semibold mb-1">Brand Surcharge Markup ($)</label>
-              <input type="number" id="prod-variant-surcharge" step="0.01" value="560.00" oninput="updateSurchargeCalculator()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-white font-mono">
+              <label class="block text-muted-theme font-semibold mb-1">Brand Surcharge Markup ($)</label>
+              <input type="number" id="prod-variant-surcharge" step="0.01" value="560.00" oninput="updateSurchargeCalculator()" class="w-full input-theme rounded-xl px-3 py-1.5 font-mono">
             </div>
           </div>
 
           <!-- Live Calculator Preview Box -->
-          <div class="p-3 rounded-lg bg-sky-500/10 border border-sky-500/25 flex items-center justify-between font-mono">
+          <div class="p-3 rounded-lg card-theme flex items-center justify-between font-mono">
             <div>
-              <span class="text-[11px] text-slate-400 block">Calculated Effective Unit Price:</span>
-              <span class="text-sm font-extrabold text-white" id="calc-preview-equation">$1200.00 + $560.00</span>
+              <span class="text-[11px] text-muted-theme block">Calculated Effective Unit Price:</span>
+              <span class="text-sm font-extrabold text-title-theme" id="calc-preview-equation">$1200.00 + $560.00</span>
             </div>
-            <span class="text-base font-extrabold text-sky-400" id="calc-preview-total">$1,760.00</span>
+            <span class="text-base font-extrabold text-emerald-600 dark:text-emerald-400" id="calc-preview-total">$1,760.00</span>
           </div>
         </div>
 
         <div class="flex justify-end space-x-2 pt-2">
-          <button type="button" onclick="closeModal('modal-create-product')" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold">Cancel</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-white font-bold shadow-md shadow-brand-500/20">Create Product</button>
+          <button type="button" onclick="closeModal('modal-create-product')" class="px-4 py-2 rounded-xl btn-subtle-grey font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl btn-tactile-grey font-bold">Create Product</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Modal 3: Create Quotation -->
-  <div id="modal-create-quotation" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md hidden">
-    <div class="glass-card rounded-3xl p-6 sm:p-7 max-w-md w-full space-y-5 border-surface-border">
+  <div id="modal-create-quotation" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
+    <div class="card-theme rounded-3xl p-6 sm:p-7 max-w-md w-full space-y-5">
       <div class="flex items-center justify-between">
-        <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-          <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i>
+        <h3 class="text-lg font-bold text-title-theme flex items-center space-x-2">
+          <i data-lucide="file-text" class="w-5 h-5 text-amber-500"></i>
           <span>Create Quotation</span>
         </h3>
-        <button onclick="closeModal('modal-create-quotation')" class="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white">
+        <button onclick="closeModal('modal-create-quotation')" class="p-1 rounded-lg btn-subtle-grey">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <form id="form-create-quotation" onsubmit="handleCreateQuotation(event)" class="space-y-4 text-xs">
         <div>
-          <label class="block text-slate-400 font-semibold mb-1">Quotation Template Name</label>
-          <input type="text" id="quote-tpl-name" required value="Gold Enterprise Plan Quote" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-brand-500">
+          <label class="block text-muted-theme font-semibold mb-1">Quotation Template Name</label>
+          <input type="text" id="quote-tpl-name" required value="Gold Enterprise Plan Quote" class="w-full input-theme rounded-xl px-3.5 py-2">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-400 font-semibold mb-1">Validity (Days)</label>
-            <input type="number" id="quote-validity-days" value="30" min="1" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-white font-mono">
+            <label class="block text-muted-theme font-semibold mb-1">Validity (Days)</label>
+            <input type="number" id="quote-validity-days" value="30" min="1" class="w-full input-theme rounded-xl px-3.5 py-2 font-mono">
           </div>
           <div>
-            <label class="block text-slate-400 font-semibold mb-1">Payment Terms</label>
-            <select id="quote-payment-terms" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-white">
+            <label class="block text-muted-theme font-semibold mb-1">Payment Terms</label>
+            <select id="quote-payment-terms" class="w-full input-theme rounded-xl px-3.5 py-2">
               <option value="Net 15" selected>Net 15</option>
               <option value="Net 30">Net 30</option>
               <option value="Net 60">Net 60</option>
@@ -868,59 +1041,59 @@
           </div>
         </div>
 
-        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-1 text-slate-400 font-mono text-[11px]">
-          <div class="flex justify-between"><span>Base Product:</span><span class="text-white">Enterprise ERP Suite</span></div>
-          <div class="flex justify-between"><span>Brand Variant:</span><span class="text-sky-400">Odoo Brand (+$560)</span></div>
-          <div class="flex justify-between"><span>Quantity:</span><span class="text-white">2 Units</span></div>
+        <div class="p-3 rounded-xl well-theme space-y-1 text-muted-theme font-mono text-[11px]">
+          <div class="flex justify-between"><span>Base Product:</span><span class="text-title-theme">Enterprise ERP Suite</span></div>
+          <div class="flex justify-between"><span>Brand Variant:</span><span class="text-title-theme font-semibold">Odoo Brand (+$560)</span></div>
+          <div class="flex justify-between"><span>Quantity:</span><span class="text-title-theme">2 Units</span></div>
         </div>
 
         <div class="flex justify-end space-x-2 pt-2">
-          <button type="button" onclick="closeModal('modal-create-quotation')" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold">Cancel</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold shadow-md shadow-amber-500/20">Instantiate Quote</button>
+          <button type="button" onclick="closeModal('modal-create-quotation')" class="px-4 py-2 rounded-xl btn-subtle-grey font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl btn-tactile-grey font-bold">Instantiate Quote</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Modal 4: Invoice Details & Partial Settlement Drawer -->
-  <div id="modal-invoice-detail" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
-    <div class="glass-card rounded-3xl p-6 sm:p-7 max-w-2xl w-full space-y-5 border-surface-border max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+  <div id="modal-invoice-detail" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm hidden">
+    <div class="card-theme rounded-3xl p-6 sm:p-7 max-w-2xl w-full space-y-5 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-3" style="border-color: var(--well-border)">
         <div>
-          <span class="text-[11px] font-mono text-brand-400" id="inv-modal-number">INV-2026-0001</span>
-          <h3 class="text-lg font-extrabold text-white">Invoice Breakdown & Settlement</h3>
+          <span class="text-[11px] font-mono text-muted-theme" id="inv-modal-number">INV-2026-0001</span>
+          <h3 class="text-lg font-extrabold text-title-theme">Invoice Breakdown & Settlement</h3>
         </div>
-        <button onclick="closeModal('modal-invoice-detail')" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white">
+        <button onclick="closeModal('modal-invoice-detail')" class="p-1.5 rounded-lg btn-subtle-grey">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <!-- Invoice Summary Meta -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
-        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">STATUS</span>
-          <span id="inv-modal-status" class="font-bold text-sky-400">OPEN</span>
+        <div class="p-3 rounded-xl well-theme">
+          <span class="text-muted-theme block text-[10px]">STATUS</span>
+          <span id="inv-modal-status" class="font-bold text-title-theme">OPEN</span>
         </div>
-        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">SUBTOTAL</span>
-          <span id="inv-modal-subtotal" class="font-bold text-white">$0.00</span>
+        <div class="p-3 rounded-xl well-theme">
+          <span class="text-muted-theme block text-[10px]">SUBTOTAL</span>
+          <span id="inv-modal-subtotal" class="font-bold text-title-theme">$0.00</span>
         </div>
-        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">TAX (15%)</span>
-          <span id="inv-modal-tax" class="font-bold text-white">$0.00</span>
+        <div class="p-3 rounded-xl well-theme">
+          <span class="text-muted-theme block text-[10px]">TAX (15%)</span>
+          <span id="inv-modal-tax" class="font-bold text-title-theme">$0.00</span>
         </div>
-        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
-          <span class="text-slate-500 block text-[10px]">TOTAL DUE</span>
-          <span id="inv-modal-total" class="font-bold text-emerald-400">$0.00</span>
+        <div class="p-3 rounded-xl well-theme">
+          <span class="text-muted-theme block text-[10px]">TOTAL DUE</span>
+          <span id="inv-modal-total" class="font-bold text-emerald-600 dark:text-emerald-400">$0.00</span>
         </div>
       </div>
 
       <!-- Itemized Lines Table -->
       <div class="space-y-2">
-        <h4 class="text-xs font-bold text-slate-300">Itemized Charges</h4>
-        <div class="rounded-xl border border-slate-800 overflow-hidden">
+        <h4 class="text-xs font-bold text-title-theme">Itemized Charges</h4>
+        <div class="rounded-xl border overflow-hidden" style="border-color: var(--well-border)">
           <table class="w-full text-xs text-left">
-            <thead class="bg-slate-900 text-slate-400 text-[11px]">
+            <thead class="well-theme text-muted-theme text-[11px]">
               <tr>
                 <th class="p-2.5">Item Description</th>
                 <th class="p-2.5">Qty</th>
@@ -928,7 +1101,7 @@
                 <th class="p-2.5 text-right">Line Total</th>
               </tr>
             </thead>
-            <tbody id="inv-modal-lines" class="divide-y divide-slate-800/60 font-mono text-[11px]">
+            <tbody id="inv-modal-lines" class="divide-y font-mono text-[11px]" style="border-color: var(--well-border)">
               <!-- Dynamic lines -->
             </tbody>
           </table>
@@ -936,18 +1109,18 @@
       </div>
 
       <!-- Record Payment Section -->
-      <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+      <div class="p-4 rounded-2xl well-theme space-y-3">
         <div class="flex items-center justify-between text-xs">
-          <span class="font-bold text-white flex items-center space-x-1.5">
-            <i data-lucide="credit-card" class="w-4 h-4 text-emerald-400"></i>
+          <span class="font-bold text-title-theme flex items-center space-x-1.5">
+            <i data-lucide="credit-card" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
             <span>Record Payment (Partial or Full)</span>
           </span>
-          <span class="text-[11px] font-mono text-slate-400">Remaining Balance: <strong id="inv-modal-remaining" class="text-emerald-400">$0.00</strong></span>
+          <span class="text-[11px] font-mono text-muted-theme">Remaining Balance: <strong id="inv-modal-remaining" class="text-emerald-600 dark:text-emerald-400">$0.00</strong></span>
         </div>
 
         <div class="flex gap-2">
-          <input type="number" id="pay-custom-amount" step="0.01" placeholder="Amount ($)" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono flex-1">
-          <button onclick="submitInvoicePayment()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs shadow-md shadow-emerald-500/20">
+          <input type="number" id="pay-custom-amount" step="0.01" placeholder="Amount ($)" class="input-theme rounded-xl px-3 py-2 text-xs font-mono flex-1">
+          <button onclick="submitInvoicePayment()" class="px-4 py-2 rounded-xl btn-tactile-grey font-bold text-xs">
             Apply Payment
           </button>
         </div>
@@ -956,28 +1129,28 @@
   </div>
 
   <!-- Modal 5: Command Palette (Ctrl+K / ⌘K) -->
-  <div id="modal-command-palette" class="fixed inset-0 z-50 flex items-start justify-center pt-24 p-4 bg-black/80 backdrop-blur-md hidden">
-    <div class="glass-card rounded-3xl max-w-lg w-full p-4 space-y-3 border-surface-border">
+  <div id="modal-command-palette" class="fixed inset-0 z-50 flex items-start justify-center pt-24 p-4 bg-black/75 backdrop-blur-sm hidden">
+    <div class="card-theme rounded-3xl max-w-lg w-full p-4 space-y-3">
       <div class="relative">
-        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
-        <input type="text" id="cmd-input" placeholder="Type a command or jump to page..." class="w-full bg-slate-900 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-brand-500 font-sans">
+        <i data-lucide="search" class="w-4 h-4 text-muted-theme absolute left-3 top-3"></i>
+        <input type="text" id="cmd-input" placeholder="Type a command or jump to page..." class="w-full input-theme rounded-2xl pl-10 pr-4 py-2.5 text-sm font-sans">
       </div>
       <div class="space-y-1 text-xs">
-        <button onclick="switchTab('dashboard'); closeModal('modal-command-palette')" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800 flex items-center justify-between text-slate-200">
-          <span class="flex items-center space-x-2"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-brand-400"></i><span>Executive Dashboard</span></span>
-          <span class="text-[10px] text-slate-500 font-mono">1</span>
+        <button onclick="switchTab('dashboard'); closeModal('modal-command-palette')" class="w-full px-3 py-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/60 flex items-center justify-between text-title-theme transition-colors">
+          <span class="flex items-center space-x-2"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-muted-theme"></i><span>Executive Dashboard</span></span>
+          <span class="text-[10px] text-muted-theme font-mono">1</span>
         </button>
-        <button onclick="switchTab('operations'); closeModal('modal-command-palette')" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800 flex items-center justify-between text-slate-200">
-          <span class="flex items-center space-x-2"><i data-lucide="briefcase" class="w-3.5 h-3.5 text-indigo-400"></i><span>Commercial Operations</span></span>
-          <span class="text-[10px] text-slate-500 font-mono">2</span>
+        <button onclick="switchTab('operations'); closeModal('modal-command-palette')" class="w-full px-3 py-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/60 flex items-center justify-between text-title-theme transition-colors">
+          <span class="flex items-center space-x-2"><i data-lucide="briefcase" class="w-3.5 h-3.5 text-muted-theme"></i><span>Commercial Operations</span></span>
+          <span class="text-[10px] text-muted-theme font-mono">2</span>
         </button>
-        <button onclick="switchTab('customer'); closeModal('modal-command-palette')" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800 flex items-center justify-between text-slate-200">
-          <span class="flex items-center space-x-2"><i data-lucide="user-check" class="w-3.5 h-3.5 text-emerald-400"></i><span>Customer Self-Service</span></span>
-          <span class="text-[10px] text-slate-500 font-mono">3</span>
+        <button onclick="switchTab('customer'); closeModal('modal-command-palette')" class="w-full px-3 py-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/60 flex items-center justify-between text-title-theme transition-colors">
+          <span class="flex items-center space-x-2"><i data-lucide="user-check" class="w-3.5 h-3.5 text-muted-theme"></i><span>Customer Self-Service</span></span>
+          <span class="text-[10px] text-muted-theme font-mono">3</span>
         </button>
-        <button onclick="switchTab('judge-demo'); closeModal('modal-command-palette')" class="w-full px-3 py-2 rounded-xl hover:bg-slate-800 flex items-center justify-between text-slate-200">
-          <span class="flex items-center space-x-2"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i><span>Judge Acceptance Runner</span></span>
-          <span class="text-[10px] text-slate-500 font-mono">4</span>
+        <button onclick="switchTab('judge-demo'); closeModal('modal-command-palette')" class="w-full px-3 py-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/60 flex items-center justify-between text-title-theme transition-colors">
+          <span class="flex items-center space-x-2"><i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i><span>Judge Acceptance Runner</span></span>
+          <span class="text-[10px] text-muted-theme font-mono">4</span>
         </button>
       </div>
     </div>
@@ -996,15 +1169,20 @@
     let authToken = localStorage.getItem('bt_token') || '';
     let currentActiveInvoiceId = null;
 
-    // Toast Engine
+    // Toast Notification Engine
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
-      toast.className = `pointer-events-auto flex items-center space-x-2.5 px-4 py-3 rounded-2xl shadow-xl text-xs font-semibold backdrop-blur-xl border transition-all duration-300 transform translate-y-4 opacity-0 ${
-        type === 'success' ? 'bg-emerald-950/85 text-emerald-300 border-emerald-500/30' :
-        type === 'error' ? 'bg-rose-950/85 text-rose-300 border-rose-500/30' :
-        'bg-slate-900/90 text-slate-200 border-brand-500/30'
-      }`;
+      const isDark = document.documentElement.classList.contains('dark');
+      
+      let bgClasses = 'card-theme text-title-theme border';
+      if (type === 'success') {
+        bgClasses = isDark ? 'bg-emerald-950/90 text-emerald-300 border-emerald-500/30' : 'bg-emerald-50 text-emerald-900 border-emerald-200';
+      } else if (type === 'error') {
+        bgClasses = isDark ? 'bg-rose-950/90 text-rose-300 border-rose-500/30' : 'bg-rose-50 text-rose-900 border-rose-200';
+      }
+      
+      toast.className = `pointer-events-auto flex items-center space-x-2.5 px-4 py-3 rounded-2xl shadow-xl text-xs font-semibold backdrop-blur-xl transition-all duration-300 transform translate-y-4 opacity-0 ${bgClasses}`;
       const icon = type === 'success' ? 'check-circle-2' : type === 'error' ? 'alert-triangle' : 'info';
       toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 shrink-0"></i><span>${message}</span>`;
       container.appendChild(toast);
@@ -1044,9 +1222,10 @@
       }
     });
 
-    // Theme Engine
+    // Theme Engine: Pure White & Light Black
     function initTheme() {
-      const isDark = localStorage.getItem('theme') !== 'light';
+      const saved = localStorage.getItem('theme');
+      const isDark = saved ? saved === 'dark' : true;
       if (isDark) {
         document.documentElement.classList.add('dark');
         document.documentElement.classList.remove('light');
@@ -1065,6 +1244,7 @@
       document.documentElement.classList.toggle('light', !isDark);
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
       initTheme();
+      refreshDashboard();
     }
 
     // Tab Switcher
@@ -1076,12 +1256,14 @@
         if (id === tabId) {
           view.classList.remove('hidden');
           if (btn) {
-            btn.className = "tab-btn px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center space-x-2 bg-brand-500 text-white shadow-md shadow-brand-500/25";
+            btn.className = "tab-btn px-4 py-2 rounded-lg text-xs transition-all flex items-center space-x-2 tab-pill-active";
           }
         } else {
           view.classList.add('hidden');
           if (btn) {
-            btn.className = "tab-btn px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition-all flex items-center space-x-2";
+            btn.className = id === 'judge-demo' 
+              ? "tab-btn px-4 py-2 rounded-lg text-xs font-semibold text-amber-500 hover:text-amber-400 transition-all flex items-center space-x-2"
+              : "tab-btn px-4 py-2 rounded-lg text-xs transition-all flex items-center space-x-2 tab-pill-inactive";
           }
         }
       });
@@ -1167,12 +1349,17 @@
       }
     }
 
-    // Render Overdue Aging Chart
+    // Render Overdue Aging Chart (Theme-Adaptive)
     function renderAgingChart(values) {
       const canvas = document.getElementById('agingChart');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       if (agingChartInstance) agingChartInstance.destroy();
+      
+      const isDark = document.documentElement.classList.contains('dark');
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)';
+      const tickColor = isDark ? '#a1a1aa' : '#71717a';
+
       agingChartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -1180,7 +1367,9 @@
           datasets: [{
             label: 'Outstanding ($)',
             data: values,
-            backgroundColor: ['#38bdf8', '#fbbf24', '#f97316', '#f43f5e'],
+            backgroundColor: isDark 
+              ? ['#71717a', '#fbbf24', '#f97316', '#f43f5e']
+              : ['#27272a', '#d97706', '#ea580c', '#e11d48'],
             borderRadius: 8
           }]
         },
@@ -1189,14 +1378,20 @@
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
-            y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono' } } },
-            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } } }
+            y: { 
+              grid: { color: gridColor }, 
+              ticks: { color: tickColor, font: { family: 'JetBrains Mono' } } 
+            },
+            x: { 
+              grid: { display: false }, 
+              ticks: { color: tickColor, font: { family: 'Plus Jakarta Sans' } } 
+            }
           }
         }
       });
     }
 
-    // Render Plan Distribution Doughnut
+    // Render Plan Distribution Doughnut (Theme-Adaptive)
     function renderPlanChart(plans) {
       const canvas = document.getElementById('planChart');
       if (!canvas) return;
@@ -1205,6 +1400,7 @@
 
       const labels = plans.map(p => p.plan_name);
       const counts = plans.map(p => p.active_subscriptions || 1);
+      const isDark = document.documentElement.classList.contains('dark');
 
       planChartInstance = new Chart(ctx, {
         type: 'doughnut',
@@ -1212,7 +1408,9 @@
           labels: labels.length ? labels : ['Standard Plan'],
           datasets: [{
             data: counts.length ? counts : [1],
-            backgroundColor: ['#38bdf8', '#818cf8', '#34d399', '#f472b6'],
+            backgroundColor: isDark 
+              ? ['#d4d4d8', '#71717a', '#3f3f46', '#27272a']
+              : ['#18181b', '#52525b', '#a1a1aa', '#d4d4d8'],
             borderWidth: 0
           }]
         },
@@ -1227,9 +1425,9 @@
       const listEl = document.getElementById('plan-breakdown-list');
       if (listEl) {
         listEl.innerHTML = plans.map(p => `
-          <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800">
-            <span class="text-white font-medium truncate">${p.plan_name}</span>
-            <span class="font-mono text-brand-400 font-bold">${p.active_subscriptions} active</span>
+          <div class="flex items-center justify-between p-2 rounded-lg well-theme">
+            <span class="text-title-theme font-medium truncate">${p.plan_name}</span>
+            <span class="font-mono text-muted-theme font-bold">${p.active_subscriptions} active</span>
           </div>
         `).join('');
       }
@@ -1263,30 +1461,30 @@
         if (res.ok) {
           const subs = await res.json();
           if (subs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-500">No active subscriptions yet. Create one via Quotation!</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-muted-theme">No active subscriptions yet. Create one via Quotation!</td></tr>';
             return;
           }
           tbody.innerHTML = subs.map(s => `
-            <tr class="hover:bg-slate-900/60 transition-colors">
-              <td class="py-3 font-mono text-brand-400 font-bold">${s.subscription_number}</td>
-              <td class="text-slate-300 font-mono text-[11px]">${s.customer_id.substring(0, 8)}...</td>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
+              <td class="py-3 font-mono text-title-theme font-bold">${s.subscription_number}</td>
+              <td class="text-muted-theme font-mono text-[11px]">${s.customer_id.substring(0, 8)}...</td>
               <td>
                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                  s.state === 'active' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' :
-                  s.state === 'paused' ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' :
-                  'bg-slate-800 text-slate-400'
+                  s.state === 'active' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' :
+                  s.state === 'paused' ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30' :
+                  'well-theme text-muted-theme'
                 }">${s.state.toUpperCase()}</span>
               </td>
-              <td class="text-slate-400">${s.next_invoice_date || 'N/A'}</td>
+              <td class="text-muted-theme">${s.next_invoice_date || 'N/A'}</td>
               <td class="text-right space-x-1">
-                ${s.state === 'active' ? `<button onclick="pauseSubscription('${s.id}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-amber-400 text-[10px] font-semibold">Pause</button>` : ''}
-                ${s.state === 'paused' ? `<button onclick="resumeSubscription('${s.id}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-emerald-400 text-[10px] font-semibold">Resume</button>` : ''}
+                ${s.state === 'active' ? `<button onclick="pauseSubscription('${s.id}')" class="px-2.5 py-1 rounded btn-subtle-grey text-[10px] font-semibold text-amber-600 dark:text-amber-400">Pause</button>` : ''}
+                ${s.state === 'paused' ? `<button onclick="resumeSubscription('${s.id}')" class="px-2.5 py-1 rounded btn-subtle-grey text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">Resume</button>` : ''}
               </td>
             </tr>
           `).join('');
         }
       } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-rose-400">Failed to fetch subscriptions</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-rose-500">Failed to fetch subscriptions</td></tr>';
       }
     }
 
@@ -1326,30 +1524,30 @@
         if (res.ok) {
           const invs = await res.json();
           if (invs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-500">No invoices generated yet</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-muted-theme">No invoices generated yet</td></tr>';
             return;
           }
           tbody.innerHTML = invs.map(i => `
-            <tr class="hover:bg-slate-900/60 transition-colors">
-              <td class="py-3 font-mono text-white font-bold">${i.invoice_number}</td>
+            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
+              <td class="py-3 font-mono text-title-theme font-bold">${i.invoice_number}</td>
               <td>
                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                  i.status === 'paid' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30' :
-                  i.status === 'confirmed' ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' :
-                  'bg-slate-800 text-slate-400'
+                  i.status === 'paid' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' :
+                  i.status === 'confirmed' ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30' :
+                  'well-theme text-muted-theme'
                 }">${i.status.toUpperCase()}</span>
               </td>
-              <td class="font-mono text-white">$${parseFloat(i.amount_total).toFixed(2)}</td>
-              <td class="font-mono text-emerald-400">$${parseFloat(i.amount_paid || 0).toFixed(2)}</td>
+              <td class="font-mono text-title-theme">$${parseFloat(i.amount_total).toFixed(2)}</td>
+              <td class="font-mono text-emerald-600 dark:text-emerald-400">$${parseFloat(i.amount_paid || 0).toFixed(2)}</td>
               <td class="text-right space-x-1.5">
-                <button onclick="viewInvoiceDetail('${i.id}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-400 text-[10px] font-semibold">Details</button>
-                ${i.status === 'draft' ? `<button onclick="confirmInvoice('${i.id}')" class="px-2.5 py-1 rounded bg-brand-500 hover:bg-brand-400 text-white text-[10px] font-semibold">Confirm</button>` : ''}
+                <button onclick="viewInvoiceDetail('${i.id}')" class="px-2.5 py-1 rounded btn-subtle-grey text-[10px] font-semibold">Details</button>
+                ${i.status === 'draft' ? `<button onclick="confirmInvoice('${i.id}')" class="px-2.5 py-1 rounded btn-tactile-grey text-[10px] font-semibold">Confirm</button>` : ''}
               </td>
             </tr>
           `).join('');
         }
       } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-rose-400">Failed to fetch invoices</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-rose-500">Failed to fetch invoices</td></tr>';
       }
     }
 
@@ -1383,14 +1581,14 @@
         if (inv.lines && inv.lines.length) {
           linesTbody.innerHTML = inv.lines.map(l => `
             <tr>
-              <td class="p-2.5 text-white">${l.description || 'Service Charge'}</td>
-              <td class="p-2.5">${l.quantity}</td>
-              <td class="p-2.5">$${parseFloat(l.unit_price).toFixed(2)}</td>
-              <td class="p-2.5 text-right text-emerald-400 font-bold">$${parseFloat(l.amount_subtotal).toFixed(2)}</td>
+              <td class="p-2.5 text-title-theme">${l.description || 'Service Charge'}</td>
+              <td class="p-2.5 text-body-theme">${l.quantity}</td>
+              <td class="p-2.5 text-body-theme">$${parseFloat(l.unit_price).toFixed(2)}</td>
+              <td class="p-2.5 text-right text-emerald-600 dark:text-emerald-400 font-bold">$${parseFloat(l.amount_subtotal).toFixed(2)}</td>
             </tr>
           `).join('');
         } else {
-          linesTbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-500">Standard Recurring Subscription Line ($${parseFloat(inv.amount_total).toFixed(2)})</td></tr>`;
+          linesTbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-muted-theme">Standard Recurring Subscription Line ($${parseFloat(inv.amount_total).toFixed(2)})</td></tr>`;
         }
 
         openModal('modal-invoice-detail');
@@ -1539,27 +1737,27 @@
         if (res.ok) {
           const invs = await res.json();
           if (invs.length === 0) {
-            container.innerHTML = '<div class="p-6 rounded-xl bg-slate-900/60 text-center text-slate-500 text-xs">No outstanding invoices. Your account is 100% in good standing!</div>';
+            container.innerHTML = '<div class="p-6 rounded-xl well-theme text-center text-muted-theme text-xs">No outstanding invoices. Your account is 100% in good standing!</div>';
             return;
           }
           container.innerHTML = invs.map(i => `
-            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="p-4 rounded-xl well-theme flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div class="flex items-center space-x-2">
-                  <span class="font-mono text-sm font-bold text-white">${i.invoice_number}</span>
+                  <span class="font-mono text-sm font-bold text-title-theme">${i.invoice_number}</span>
                   <span class="text-[10px] px-2 py-0.5 rounded font-semibold ${
-                    i.status === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'
+                    i.status === 'paid' ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
                   }">${i.status.toUpperCase()}</span>
                 </div>
-                <p class="text-xs text-slate-400 mt-1">Issue Date: ${i.invoice_date || 'Today'} | Total Due: <strong class="text-white font-mono">$${parseFloat(i.amount_total).toFixed(2)}</strong></p>
+                <p class="text-xs text-muted-theme mt-1">Issue Date: ${i.invoice_date || 'Today'} | Total Due: <strong class="text-title-theme font-mono">$${parseFloat(i.amount_total).toFixed(2)}</strong></p>
               </div>
               <div>
                 ${i.status !== 'paid' ? `
-                  <button onclick="customerQuickPay('${i.invoice_number}', '${parseFloat(i.amount_total).toFixed(4)}')" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-400 text-white text-xs font-bold transition-all shadow-md shadow-brand-500/25 flex items-center justify-center space-x-1.5">
+                  <button onclick="customerQuickPay('${i.invoice_number}', '${parseFloat(i.amount_total).toFixed(4)}')" class="px-4 py-2 rounded-xl btn-tactile-grey text-xs font-bold transition-all flex items-center justify-center space-x-1.5">
                     <i data-lucide="credit-card" class="w-4 h-4"></i>
                     <span>Pay $${parseFloat(i.amount_total).toFixed(2)} Now</span>
                   </button>
-                ` : `<span class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-xs font-bold flex items-center space-x-1"><i data-lucide="check" class="w-3.5 h-3.5"></i><span>Paid</span></span>`}
+                ` : `<span class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center space-x-1"><i data-lucide="check" class="w-3.5 h-3.5"></i><span>Paid</span></span>`}
               </div>
             </div>
           `).join('');
@@ -1614,12 +1812,12 @@
         const out = el.querySelector('.step-output');
         badge.innerText = badgeText;
         if (status === 'running') {
-          badge.className = 'step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-brand-500/20 text-brand-400 animate-pulse font-bold';
+          badge.className = 'step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-zinc-500/20 text-title-theme animate-pulse font-bold';
         } else if (status === 'pass') {
-          badge.className = 'step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30';
+          badge.className = 'step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30';
           el.classList.add('border-emerald-500/40');
         } else {
-          badge.className = 'step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30';
+          badge.className = 'step-badge text-[11px] px-2.5 py-0.5 rounded-full font-mono bg-rose-500/20 text-rose-500 font-bold border border-rose-500/30';
         }
         out.innerText = text;
       };
