@@ -97,7 +97,7 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, pay);
     }
 
-    // Full UI: Linear/Stripe Inspired Obsidian Carbon (#090a0f) & Sky Blue (#38bdf8)
+    // Full UI: Obsidian Carbon (#090a0f) & Sky Blue (#38bdf8)
     if (pathname === '/' || pathname === '/dashboard') {
       const dash = getExecutiveFinancialDashboard();
       const html = `
