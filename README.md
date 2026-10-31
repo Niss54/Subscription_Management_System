@@ -115,26 +115,26 @@ SaaS companies and modern subscription businesses face catastrophic revenue leak
 ### 1. Unified System Topology
 ```mermaid
 flowchart TD
-    subgraph ClientLayer["🖥️ Client & Portal Tier"]
-        AdminCockpit["Next.js 15 Admin Cockpit<br/>(TailwindCSS · GSAP · Lucide)"]
-        StaffPortal["Staff Operations Hub<br/>(Plans · Quotations · Invoices)"]
-        CustomerPortal["Customer Self-Service Portal<br/>(Tenant-Scoped Data)"]
-        JudgeRunner["1-Click Judge Demo Runner<br/>(7 Automated Acceptance Steps)"]
+    subgraph ClientLayer["Frontend and Portal Tier"]
+        AdminCockpit["Next.js 15 Admin Cockpit"]
+        StaffPortal["Staff Operations Hub"]
+        CustomerPortal["Customer Self-Service Portal"]
+        JudgeRunner["1-Click Judge Demo Runner"]
     end
 
-    subgraph APILayer["⚡ FastAPI Commercial Billing Engine (Port 8000)"]
-        AuthModule["Auth & Security Router<br/>(Regex ^(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{9,}$ · Bcrypt · JWT)"]
-        CatalogModule["Catalog & Pricing Engine<br/>(Base Sales Price + Brand Variant Surcharges)"]
-        QuoteModule["Quotation Lifecycle Engine<br/>(Validity Days · Terms · Expiry Guards)"]
-        BillingModule["Mass Billing & Invoicing Engine<br/>(SHA-256 Idempotency · Zero Double-Billing)"]
-        ProrationEngine["Exact Fraction Proration<br/>(fractions.Fraction Elapsed Seconds)"]
-        SettlementModule["Payment Settlement Engine<br/>(Cumulative Partial Settlement · Auto-Paid)"]
-        DashboardModule["Executive Dashboard Engine<br/>(Point-in-Time MRR/ARR · Aging Buckets · <50ms SLA)"]
+    subgraph APILayer["FastAPI Commercial Billing Engine"]
+        AuthModule["Auth and Security Module"]
+        CatalogModule["Catalog and Pricing Engine"]
+        QuoteModule["Quotation Lifecycle Engine"]
+        BillingModule["Mass Billing and Invoicing Engine"]
+        ProrationEngine["Exact Fraction Proration Engine"]
+        SettlementModule["Payment Settlement Engine"]
+        DashboardModule["Executive Dashboard Engine"]
     end
 
-    subgraph DataLayer["💾 Dual-Persistence & Cloud Tier"]
-        SQLiteDB[("SQLite WAL Local Engine<br/>(brightloop.db · Zero-Config Fallback)")]
-        SupabaseDB[("Supabase Cloud PostgreSQL<br/>(vzuxwfmpxgkjcjdftuqp.supabase.co)")]
+    subgraph DataLayer["Dual-Persistence Tier"]
+        SQLiteDB[("SQLite WAL Local Engine")]
+        SupabaseDB[("Supabase Cloud PostgreSQL")]
     end
 
     ClientLayer --> APILayer
@@ -152,28 +152,15 @@ flowchart TD
 ### 2. Complete Subscription Lifecycle State Machine
 ```mermaid
 stateDiagram-v2
-    [*] --> Draft: Staff / Customer Initiates
-    Draft --> Quotation: Template Instantiation (Validity Days + Terms)
-    
-    state Quotation {
-        [*] --> PendingReview
-        PendingReview --> Expired: Expiration Date Reached
-        Expired --> [*]: Confirmation Blocked (HTTP 400)
-    }
-
-    Quotation --> Confirmed: Valid Within Expiry Window
-    Confirmed --> Active: Initial Payment / Period Start
-    
-    state Active {
-        [*] --> InCycle
-        InCycle --> MidCycleChange: Seat / Plan Change (Prorated)
-        MidCycleChange --> InCycle
-    }
-
-    Active --> Paused: Pause Request (Guarded by allow_pause=True)
-    Paused --> Active: Resume Subscription
-    
-    Active --> Closed: End of Contract / Cancel Request
+    [*] --> Draft
+    Draft --> Quotation: Template Instantiation
+    Quotation --> Expired: Validity Window Exceeded
+    Expired --> [*]: Confirmation Blocked
+    Quotation --> Confirmed: Valid Expiry Window
+    Confirmed --> Active: Initial Settlement
+    Active --> Paused: Pause Request (allow_pause=True)
+    Paused --> Active: Resume Request
+    Active --> Closed: Contract Terminated
     Paused --> Closed: Contract Terminated
     Closed --> [*]
 ```
@@ -184,32 +171,31 @@ stateDiagram-v2
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as System / Cron Trigger
-    participant Router as /invoices/run-billing-cycle
+    actor Admin as System Trigger
+    participant Router as API Router
     participant Engine as Billing Run Engine
-    participant DB as Database (Session)
-    participant InvoiceTable as Invoices Table
+    participant DB as Database
+    participant Invoices as Invoices Table
 
-    Admin->>Router: POST /invoices/run-billing-cycle (target_date=Today)
-    Router->>Engine: run_billing_cycle(db, target_date)
-    Engine->>DB: Query Subscriptions WHERE status in ('confirmed', 'active') AND current_period_end <= target_date
+    Admin->>Router: POST /invoices/run-billing-cycle
+    Router->>Engine: run_billing_cycle(target_date)
+    Engine->>DB: Query Due Subscriptions
     DB-->>Engine: Return Eligible Subscriptions
     
-    loop For Each Subscription
-        Engine->>Engine: Compute SHA-256 Idempotency Key = hash(sub.id + period_start + period_end)
-        Engine->>InvoiceTable: Check for existing period_key / idempotency_key
-        alt Existing Key Found
-            Engine->>Engine: Skip Subscription (zero double-billing)
-        else No Existing Key
-            Engine->>Engine: Calculate Lines (Plan + Addons + Seats + Prorations)
-            Engine->>Engine: Apply Pre-Tax Discounts -> Calculate Tax on Net
-            Engine->>InvoiceTable: Insert Invoice with unique period_key
-            Engine->>DB: Advance sub.current_period_start and sub.current_period_end in SAME transaction
+    loop Each Subscription
+        Engine->>Engine: Compute SHA-256 Idempotency Key
+        Engine->>Invoices: Check for Existing Period Key
+        alt Key Exists
+            Engine->>Engine: Skip Subscription (Zero Double-Billing)
+        else New Period
+            Engine->>Engine: Apply Pre-Tax Discounts and VAT
+            Engine->>Invoices: Insert Invoice Record
+            Engine->>DB: Advance Subscription Billing Period
         end
     end
 
     Engine->>DB: Commit Atomic Transaction
-    Router-->>Admin: BillingRunResult (invoices_generated, skipped_count, processed_count)
+    Router-->>Admin: BillingRunResult
 ```
 
 ---
