@@ -134,3 +134,4 @@ def record_discount_usage_atomic(db: Session, discount_rule_id: str) -> bool:
     rule.current_uses += 1
     db.commit()
     return True
+

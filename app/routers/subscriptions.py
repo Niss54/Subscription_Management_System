@@ -238,3 +238,4 @@ def transition_subscription_state(
     db.commit()
     db.refresh(sub)
     return sub
+

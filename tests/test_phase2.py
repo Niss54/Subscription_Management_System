@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 def test_phase2_health(client: TestClient):
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json()["phase"] == "Phase 2: Core Commercial Billing Engine"
+    assert response.json()["status"] == "healthy"
 
 def test_quotation_template_to_subscription(client: TestClient, admin_token: str):
     headers = {"Authorization": f"Bearer {admin_token}"}

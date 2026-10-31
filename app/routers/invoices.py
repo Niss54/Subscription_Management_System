@@ -199,3 +199,4 @@ def trigger_billing_run(
 ):
     result = run_billing_cycle(db, target_date or date.today())
     return result
+

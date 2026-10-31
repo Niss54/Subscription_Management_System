@@ -85,3 +85,4 @@ def apply_discount_to_subscription(
         "status": "success",
         "message": f"Discount code '{rule.code}' successfully applied to subscription {sub.subscription_number}"
     }
+

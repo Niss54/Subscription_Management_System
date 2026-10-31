@@ -1,12 +1,15 @@
+import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.database import engine, Base, SessionLocal
 from app.models import User, UserRole
 from app.auth import get_password_hash
-from app.routers import auth, products, plans, quotation_templates, subscriptions, discounts, invoices
+from app.routers import auth, products, plans, quotation_templates, subscriptions, discounts, invoices, payments, dashboard
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -58,14 +61,29 @@ app.include_router(quotation_templates.router)
 app.include_router(subscriptions.router)
 app.include_router(discounts.router)
 app.include_router(invoices.router)
+app.include_router(payments.router)
+app.include_router(dashboard.router)
+
+# ─── Static Web Portal ───
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_dir):
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+@app.get("/", include_in_schema=False)
+@app.get("/portal", include_in_schema=False)
+def serve_portal():
+    index_path = os.path.join(static_dir, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return {"message": "Brightloop Billing Engine Online. Visit /docs for Swagger API."}
 
 @app.get("/health")
 def health_check():
     return {
         "status": "healthy",
         "service": "Brightloop Subscription Billing Engine",
-        "version": "2.0.0",
-        "phase": "Phase 2: Core Commercial Billing Engine"
+        "version": "3.0.0",
+        "phase": "Phase 3: Payments, Analytics & Executive Dashboard"
     }
 
 if __name__ == "__main__":
