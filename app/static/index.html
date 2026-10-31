@@ -267,9 +267,11 @@
       font-weight: 600;
     }
     html:not(.dark) .tab-pill-active {
-      background-color: #0f172a !important;
-      color: #ffffff !important;
-      border: 1px solid #0f172a !important;
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border: 1px solid rgba(0, 0, 0, 0.12) !important;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+      font-weight: 700;
     }
     .tab-pill-inactive {
       background-color: transparent !important;
@@ -284,11 +286,11 @@
       background-color: rgba(255, 255, 255, 0.08) !important;
     }
     html:not(.dark) .tab-pill-inactive {
-      color: #64748b !important;
+      color: #475569 !important;
     }
     html:not(.dark) .tab-pill-inactive:hover {
       color: #0f172a !important;
-      background-color: #f1f5f9 !important;
+      background-color: rgba(0, 0, 0, 0.05) !important;
     }
 
     /* Custom Scrollbars */
@@ -307,23 +309,23 @@
 </head>
 <body class="min-h-screen antialiased selection:bg-zinc-500/20">
 
-  <!-- ==================== FLOATING CAPSULE NAVBAR (EXACT REPLICA OF SCREENSHOT 2 DOCK) ==================== -->
+  <!-- ==================== FLOATING CAPSULE NAVBAR (ADAPTIVE THEME DOCK) ==================== -->
   <header class="sticky top-3 sm:top-5 z-40 px-3 sm:px-6 max-w-5xl mx-auto transition-all">
-    <div class="bg-[#0b0d14]/95 backdrop-blur-2xl border border-white/10 rounded-full px-4 sm:px-6 py-2.5 shadow-2xl shadow-black/50 flex items-center justify-between gap-4">
+    <div class="bg-slate-100/90 dark:bg-[#0b0d14]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-white/10 rounded-full px-4 sm:px-6 py-2.5 shadow-xl shadow-slate-200/50 dark:shadow-2xl dark:shadow-black/50 flex items-center justify-between gap-4 transition-colors">
       
-      <!-- Left: Logo & Brand (Matching 'RAPID AI CARE COPILOT' reference) -->
+      <!-- Left: Logo & Brand -->
       <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchTab('dashboard')">
         <img src="/static/logo.png" alt="Brightloop Logo" class="w-8 h-8 rounded-lg object-contain transition-transform group-hover:scale-105" />
         <div class="flex flex-col">
           <div class="flex items-center space-x-1.5">
-            <span class="font-extrabold text-xs sm:text-sm tracking-wider text-white uppercase leading-none">BRIGHTLOOP</span>
-            <span class="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 font-bold">AI</span>
+            <span class="font-extrabold text-xs sm:text-sm tracking-wider text-slate-900 dark:text-white uppercase leading-none">BRIGHTLOOP</span>
+            <span class="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/25 font-bold">AI</span>
           </div>
-          <span class="text-[9px] font-mono tracking-widest text-slate-400 uppercase mt-0.5">BILLING COPILOT</span>
+          <span class="text-[9px] font-mono tracking-widest text-slate-500 dark:text-slate-400 uppercase mt-0.5">BILLING COPILOT</span>
         </div>
       </div>
 
-      <!-- Center: Capsule Navigation Links (Matching Screenshot 2 Pill Selection) -->
+      <!-- Center: Capsule Navigation Links -->
       <nav class="hidden md:flex items-center space-x-1">
         <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-1.5 rounded-full text-xs font-semibold transition-all tab-pill-active">
           Dashboard
@@ -339,27 +341,27 @@
         </button>
       </nav>
 
-      <!-- Right: Action Buttons (Exact Replica of Screenshot 2 Style) -->
+      <!-- Right: Action Buttons -->
       <div class="flex items-center space-x-2.5">
-        <!-- Glowing Primary Pill Button ('Run Billing' - Exact match to 'Start Talking' in screenshot 2) -->
-        <button id="btn-run-billing-nav" onclick="triggerMassBilling()" class="px-5 py-2 rounded-full text-xs font-bold bg-[#10b981] hover:bg-[#059669] text-slate-950 shadow-lg shadow-emerald-500/30 transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]">
+        <!-- Glowing Primary Pill Button ('Run Billing') -->
+        <button id="btn-run-billing-nav" onclick="triggerMassBilling()" class="px-5 py-2 rounded-full text-xs font-bold bg-emerald-600 hover:bg-emerald-500 dark:bg-[#10b981] dark:hover:bg-[#059669] text-white dark:text-slate-950 shadow-md shadow-emerald-600/25 dark:shadow-lg dark:shadow-emerald-500/30 transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]">
           <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
           <span>Run Billing</span>
         </button>
 
-        <!-- Secondary Outlined Pill Button ('Account' - Exact match to 'Patient Status' in screenshot 2) -->
-        <button id="btn-auth-nav" onclick="openModal('modal-auth')" class="px-4 py-2 rounded-full text-xs font-semibold bg-[#14161f] hover:bg-[#1d1f2c] border border-white/15 text-white transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]">
+        <!-- Secondary Outlined Pill Button ('Account') -->
+        <button id="btn-auth-nav" onclick="openModal('modal-auth')" class="px-4 py-2 rounded-full text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-300/90 text-slate-800 shadow-sm dark:bg-[#14161f] dark:hover:bg-[#1d1f2c] dark:border-white/15 dark:text-white transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]">
           <i data-lucide="user" class="w-3.5 h-3.5"></i>
           <span id="auth-btn-label">Account</span>
         </button>
 
         <!-- Search (⌘K) -->
-        <button id="btn-quick-search" onclick="openCommandPalette()" class="hidden sm:flex p-1.5 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors" title="Search (⌘K)">
+        <button id="btn-quick-search" onclick="openCommandPalette()" class="hidden sm:flex p-1.5 rounded-full hover:bg-slate-200/70 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" title="Search (⌘K)">
           <i data-lucide="search" class="w-3.5 h-3.5"></i>
         </button>
 
         <!-- Theme Toggle -->
-        <button id="btn-theme-toggle" onclick="toggleTheme()" class="p-1.5 rounded-full hover:bg-white/10 text-slate-400 hover:text-white transition-colors" title="Toggle Light/Dark Theme">
+        <button id="btn-theme-toggle" onclick="toggleTheme()" class="p-1.5 rounded-full hover:bg-slate-200/70 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors" title="Toggle Light/Dark Theme">
           <i data-lucide="sun" id="theme-icon" class="w-4 h-4"></i>
         </button>
       </div>
@@ -1893,7 +1895,9 @@
             container.innerHTML = '<div class="p-6 rounded-xl well-theme text-center text-muted-theme text-xs">No outstanding invoices. Your account is 100% in good standing!</div>';
             return;
           }
-          container.innerHTML = invs.map(i => `
+          container.innerHTML = invs.map(i => {
+            const rem = Math.max(0, parseFloat(i.amount_total) - parseFloat(i.amount_paid || 0));
+            return `
             <div class="p-4 rounded-xl well-theme flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div class="flex items-center space-x-2">
@@ -1902,18 +1906,18 @@
                     i.status === 'paid' ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
                   }">${i.status.toUpperCase()}</span>
                 </div>
-                <p class="text-xs text-secondary-theme mt-1">Issue Date: ${i.invoice_date || 'Today'} | Total Due: <strong class="text-primary-theme font-mono">$${parseFloat(i.amount_total).toFixed(2)}</strong></p>
+                <p class="text-xs text-secondary-theme mt-1">Issue Date: ${i.invoice_date || 'Today'} | Remaining Balance: <strong class="text-primary-theme font-mono">$${rem.toFixed(2)}</strong> (Total: $${parseFloat(i.amount_total).toFixed(2)})</p>
               </div>
               <div>
-                ${i.status !== 'paid' ? `
-                  <button onclick="customerQuickPay('${i.invoice_number}', '${parseFloat(i.amount_total).toFixed(4)}')" class="px-4 py-2 rounded-xl btn-tactile-grey text-xs flex items-center justify-center space-x-1.5">
+                ${i.status !== 'paid' && rem > 0 ? `
+                  <button onclick="customerQuickPay('${i.invoice_number}', '${rem.toFixed(4)}')" class="px-4 py-2 rounded-xl btn-tactile-grey text-xs flex items-center justify-center space-x-1.5">
                     <i data-lucide="credit-card" class="w-4 h-4"></i>
-                    <span>Pay $${parseFloat(i.amount_total).toFixed(2)} Now</span>
+                    <span>Pay $${rem.toFixed(2)} Now</span>
                   </button>
                 ` : `<span class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold flex items-center space-x-1"><i data-lucide="check" class="w-3.5 h-3.5"></i><span>Paid</span></span>`}
               </div>
             </div>
-          `).join('');
+          `}).join('');
           lucide.createIcons();
         }
       } catch (e) {

@@ -15,8 +15,8 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-3 sm:top-5 z-50 px-3 sm:px-6 max-w-6xl mx-auto transition-all">
-      <div className="bg-[#0c0d14]/95 backdrop-blur-2xl border border-white/10 rounded-full px-4 sm:px-6 py-2 shadow-2xl flex items-center justify-between gap-3">
+    <header className="sticky top-3 sm:top-5 z-50 px-3 sm:px-6 max-w-5xl mx-auto transition-all">
+      <div className="bg-slate-100/90 dark:bg-[#0b0d14]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-white/10 rounded-full px-4 sm:px-6 py-2.5 shadow-xl shadow-slate-200/50 dark:shadow-2xl dark:shadow-black/50 flex items-center justify-between gap-4 transition-colors">
         
         {/* Left: Logo & Brand */}
         <Link href="/" className="flex items-center space-x-3 group">
@@ -27,14 +27,14 @@ export default function Navbar() {
           />
           <div className="flex flex-col">
             <div className="flex items-center space-x-1.5">
-              <span className="font-extrabold text-xs sm:text-sm tracking-wider text-white uppercase leading-none">
+              <span className="font-extrabold text-xs sm:text-sm tracking-wider text-slate-900 dark:text-white uppercase leading-none">
                 BRIGHTLOOP
               </span>
-              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/25 font-bold">
                 AI
               </span>
             </div>
-            <span className="text-[9px] font-mono tracking-widest text-slate-400 uppercase mt-0.5">
+            <span className="text-[9px] font-mono tracking-widest text-slate-500 dark:text-slate-400 uppercase mt-0.5">
               BILLING COPILOT
             </span>
           </div>
@@ -50,8 +50,8 @@ export default function Navbar() {
                 href={item.href}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   isActive
-                    ? 'bg-[#222538] text-white border border-white/15 shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-white text-slate-900 border border-black/10 shadow-sm dark:bg-[#222538] dark:text-white dark:border-white/15'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-black/5 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5'
                 }`}
               >
                 {item.label}
@@ -65,7 +65,7 @@ export default function Navbar() {
           {/* Glowing Primary Pill Button ('Run Billing' - Exact match to 'Start Talking' in screenshot 2) */}
           <Link
             href="/admin"
-            className="px-5 py-2 rounded-full text-xs font-bold bg-[#10b981] hover:bg-[#059669] text-slate-950 shadow-lg shadow-emerald-500/30 transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]"
+            className="px-5 py-2 rounded-full text-xs font-bold bg-emerald-600 hover:bg-emerald-500 dark:bg-[#10b981] dark:hover:bg-[#059669] text-white dark:text-slate-950 shadow-md shadow-emerald-600/25 dark:shadow-lg dark:shadow-emerald-500/30 transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Run Billing</span>
@@ -74,7 +74,7 @@ export default function Navbar() {
           {/* Secondary Outlined Pill Button ('Account' - Exact match to 'Patient Status' in screenshot 2) */}
           <Link
             href="/portal"
-            className="px-4 py-2 rounded-full text-xs font-semibold bg-[#14161f] hover:bg-[#1d1f2c] border border-white/15 text-white transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]"
+            className="px-4 py-2 rounded-full text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-300/90 text-slate-800 shadow-sm dark:bg-[#14161f] dark:hover:bg-[#1d1f2c] dark:border-white/15 dark:text-white transition-all flex items-center space-x-1.5 hover:scale-[1.02] active:scale-[0.98]"
           >
             <User className="w-3.5 h-3.5" />
             <span>Account</span>
