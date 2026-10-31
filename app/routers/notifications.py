@@ -43,7 +43,7 @@ def send_bulk_notification(
                     )
                     email_service.send_email(
                         to_email=inv.customer.email,
-                        subject=f"Urgent: Payment Reminder for {inv.invoice_number}",
+                        subject=f"Invoice Statement #{inv.invoice_number} - Brightloop Software",
                         html_content=html,
                         text_content=payload.body_message
                     )
@@ -118,8 +118,8 @@ def trigger_overdue_blast(
     """1-Click shortcut to blast payment reminders to all overdue customer accounts."""
     req = EmailNotificationRequest(
         target_group="overdue_customers",
-        subject="Brightloop Payment Overdue Reminder",
-        body_message="Your invoice is overdue. Please settle your outstanding balance via the portal."
+        subject="Brightloop Software Invoice Statement",
+        body_message="Your invoice statement is ready for review. Please settle your outstanding balance via the portal."
     )
     return send_bulk_notification(payload=req, db=db, current_user=current_user)
 
