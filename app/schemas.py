@@ -318,3 +318,48 @@ class CreditNoteOut(BaseModel):
     notes: Optional[str]
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
+
+
+# ─────────────── RAZORPAY SCHEMAS ───────────────
+
+class RazorpayOrderRequest(BaseModel):
+    invoice_id: str
+
+class RazorpayOrderResponse(BaseModel):
+    order_id: str
+    amount_paise: int
+    currency: str
+    key_id: str
+    invoice_id: str
+    invoice_number: str
+
+class RazorpayVerifyRequest(BaseModel):
+    invoice_id: str
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+
+
+# ─────────────── GOOGLE / SUPABASE AUTH SCHEMAS ───────────────
+
+class GoogleOAuthCallback(BaseModel):
+    email: EmailStr
+    full_name: Optional[str] = "Google User"
+    provider_id: Optional[str] = None
+
+
+# ─────────────── NOTIFICATION & EMAIL SCHEMAS ───────────────
+
+class EmailNotificationRequest(BaseModel):
+    target_group: str = "overdue_customers"  # 'overdue_customers', 'all_customers', 'staff', 'custom'
+    custom_recipients: Optional[List[EmailStr]] = None
+    subject: str
+    body_message: str
+
+class EmailNotificationResponse(BaseModel):
+    success: bool
+    dispatched_count: int
+    target_group: str
+    recipients: List[str]
+    subject: str
+    message: str

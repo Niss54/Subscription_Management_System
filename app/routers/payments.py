@@ -121,3 +121,108 @@ def list_payments(
     if invoice_id:
         query = query.filter(Payment.invoice_id == invoice_id)
     return query.order_by(Payment.created_at.desc()).all()
+
+
+# ─────────────── LIVE RAZORPAY PAYMENT GATEWAY ───────────────
+
+import os
+import razorpay
+from app.schemas import RazorpayOrderRequest, RazorpayOrderResponse, RazorpayVerifyRequest
+
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "rzp_test_TuUsDGzdl3LAh5")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "gFcJZRirOJgpZPs0CjqM7f06")
+
+
+@router.post("/razorpay/create-order", response_model=RazorpayOrderResponse)
+def create_razorpay_order(
+    payload: RazorpayOrderRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Creates an official Razorpay Order for live checkout.
+    Calculates exact remaining balance on the invoice in paise (INR).
+    """
+    invoice = db.query(Invoice).filter(Invoice.id == str(payload.invoice_id)).first()
+    if not invoice:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found")
+    if current_user.role.value == "customer" and invoice.customer_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied to this invoice")
+    if invoice.status == InvoiceStatus.paid:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invoice is already fully paid")
+    if invoice.status == InvoiceStatus.cancelled:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot create order for cancelled invoice")
+    if invoice.status == InvoiceStatus.draft:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invoice must be confirmed before checkout")
+
+    due_amount = invoice.amount_total - (invoice.amount_paid or Decimal("0.0000"))
+    amount_paise = int(round(float(due_amount) * 100))
+    if amount_paise <= 0:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No remaining amount due on invoice")
+
+    client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+    order_data = {
+        "amount": amount_paise,
+        "currency": "INR",
+        "receipt": f"rcpt_{invoice.invoice_number[:20]}",
+        "notes": {
+            "invoice_id": str(invoice.id),
+            "invoice_number": invoice.invoice_number,
+            "customer_id": str(invoice.customer_id)
+        }
+    }
+    try:
+        razorpay_order = client.order.create(data=order_data)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=f"Razorpay API Error: {str(e)}")
+
+    return RazorpayOrderResponse(
+        order_id=razorpay_order["id"],
+        amount_paise=razorpay_order["amount"],
+        currency=razorpay_order["currency"],
+        key_id=RAZORPAY_KEY_ID,
+        invoice_id=str(invoice.id),
+        invoice_number=invoice.invoice_number
+    )
+
+
+@router.post("/razorpay/verify-payment", response_model=PaymentOut, status_code=status.HTTP_201_CREATED)
+def verify_razorpay_payment(
+    payload: RazorpayVerifyRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Verifies cryptographic payment signature from Razorpay.
+    Upon successful verification, reconciles ledger, credits payment, and transitions invoice to paid.
+    """
+    invoice = db.query(Invoice).filter(Invoice.id == str(payload.invoice_id)).first()
+    if not invoice:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found")
+
+    client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+    try:
+        client.utility.verify_payment_signature({
+            "razorpay_order_id": payload.razorpay_order_id,
+            "razorpay_payment_id": payload.razorpay_payment_id,
+            "razorpay_signature": payload.razorpay_signature
+        })
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Razorpay cryptographic signature")
+
+    due_amount = invoice.amount_total - (invoice.amount_paid or Decimal("0.0000"))
+
+    payment = Payment(
+        invoice_id=invoice.id,
+        payment_method=PaymentMethodEnum.upi,
+        amount=due_amount,
+        reference_note=f"Razorpay Verified: {payload.razorpay_payment_id} (Order: {payload.razorpay_order_id})",
+        recorded_by=current_user.id
+    )
+    db.add(payment)
+
+    invoice.amount_paid = invoice.amount_total
+    invoice.status = InvoiceStatus.paid
+    db.commit()
+    db.refresh(payment)
+    return payment

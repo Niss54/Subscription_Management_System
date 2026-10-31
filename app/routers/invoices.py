@@ -202,7 +202,7 @@ def trigger_billing_run(
     return result
 
 
-# ─────────────── CREDIT NOTES (LAGO / KILL BILL PATTERN) ───────────────
+# ─────────────── CREDIT NOTES & LEDGER ADJUSTMENTS ───────────────
 
 @router.post("/{id}/credit-notes", response_model=CreditNoteOut, status_code=status.HTTP_201_CREATED)
 def issue_credit_note(
