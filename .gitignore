@@ -1,0 +1,23 @@
+# Dependencies and cloned repos
+research-system-main/
+research-system/
+
+# Agent skills, customizations and plugins (CRITICAL: Never commit to GitHub)
+.gemini/
+skills/
+plugins/
+*.agent
+.gravitas/
+
+# Python / Node caches
+__pycache__/
+*.py[cod]
+*$py.class
+node_modules/
+.env
+.env.local
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
