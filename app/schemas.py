@@ -3,7 +3,7 @@ from decimal import Decimal
 from datetime import date, datetime
 from typing import Optional, List
 from pydantic import BaseModel, EmailStr, ConfigDict
-from app.models import UserRole, BillingInterval, SubscriptionState, InvoiceStatus, DiscountType, DiscountScope, PaymentMethodEnum
+from app.models import UserRole, BillingInterval, SubscriptionState, InvoiceStatus, DiscountType, DiscountScope, PaymentMethodEnum, CreditNoteReason
 
 
 # ─────────────── AUTH SCHEMAS ───────────────
@@ -284,5 +284,25 @@ class PaymentOut(BaseModel):
     payment_date: datetime
     reference_note: Optional[str] = None
     recorded_by: str
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+
+# ─────────────── CREDIT NOTE SCHEMAS ───────────────
+
+class CreditNoteCreate(BaseModel):
+    amount: Decimal
+    reason: CreditNoteReason = CreditNoteReason.other
+    notes: Optional[str] = None
+
+class CreditNoteOut(BaseModel):
+    id: str
+    credit_note_number: str
+    invoice_id: str
+    customer_id: str
+    amount: Decimal
+    reason: CreditNoteReason
+    refund_status: str
+    notes: Optional[str]
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)

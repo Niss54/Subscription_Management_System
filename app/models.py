@@ -53,6 +53,13 @@ class PaymentMethodEnum(str, enum.Enum):
     upi = "upi"
     check = "check"
 
+class CreditNoteReason(str, enum.Enum):
+    duplicated_charge = "duplicated_charge"
+    product_unsatisfactory = "product_unsatisfactory"
+    order_cancellation = "order_cancellation"
+    other = "other"
+
+
 
 # ─────────────── MODELS ───────────────
 
@@ -264,6 +271,7 @@ class Invoice(Base):
     customer = relationship("User", back_populates="invoices")
     lines = relationship("InvoiceLine", back_populates="invoice", cascade="all, delete-orphan")
     payments = relationship("Payment", back_populates="invoice")
+    credit_notes = relationship("CreditNote", back_populates="invoice")
 
 
 class InvoiceLine(Base):
@@ -297,3 +305,21 @@ class Payment(Base):
 
     invoice = relationship("Invoice", back_populates="payments")
     recorded_by_user = relationship("User", back_populates="payments_recorded")
+
+
+class CreditNote(Base):
+    __tablename__ = "credit_notes"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    credit_note_number = Column(String(50), unique=True, nullable=False)
+    invoice_id = Column(String(36), ForeignKey("invoices.id"), nullable=False)
+    customer_id = Column(String(36), ForeignKey("users.id"), nullable=False)
+    amount = Column(Numeric(16, 4), nullable=False)
+    reason = Column(Enum(CreditNoteReason, native_enum=False), nullable=False, default=CreditNoteReason.other)
+    refund_status = Column(String(20), nullable=False, default="succeeded")
+    notes = Column(Text)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
+
+    invoice = relationship("Invoice", back_populates="credit_notes")
+    customer = relationship("User")
+

@@ -5,8 +5,8 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import User, UserRole, Invoice, InvoiceStatus, Payment
-from app.schemas import InvoiceOut, BillingRunResult
+from app.models import User, UserRole, Invoice, InvoiceStatus, Payment, CreditNote
+from app.schemas import InvoiceOut, BillingRunResult, CreditNoteCreate, CreditNoteOut
 from app.auth import get_current_user, require_admin_or_staff, require_admin
 from app.services.billing import run_billing_cycle
 from app.services.discount import record_discount_usage_atomic
@@ -199,4 +199,54 @@ def trigger_billing_run(
 ):
     result = run_billing_cycle(db, target_date or date.today())
     return result
+
+
+# ─────────────── CREDIT NOTES (LAGO / KILL BILL PATTERN) ───────────────
+
+@router.post("/{id}/credit-notes", response_model=CreditNoteOut, status_code=status.HTTP_201_CREATED)
+def issue_credit_note(
+    id: str,
+    payload: CreditNoteCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin_or_staff)
+):
+    inv = db.query(Invoice).filter(Invoice.id == id).first()
+    if not inv:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    if inv.status not in [InvoiceStatus.confirmed, InvoiceStatus.paid]:
+        raise HTTPException(status_code=400, detail="Credit notes can only be issued against confirmed or paid invoices")
+    if payload.amount <= 0 or payload.amount > inv.amount_total:
+        raise HTTPException(status_code=400, detail="Credit note amount must be positive and cannot exceed invoice total")
+
+    cn_count = db.query(CreditNote).count() + 1
+    cn_number = f"CN-{inv.invoice_number.replace('INV-', '')}-{cn_count:02d}"
+
+    credit_note = CreditNote(
+        credit_note_number=cn_number,
+        invoice_id=inv.id,
+        customer_id=inv.customer_id,
+        amount=payload.amount,
+        reason=payload.reason,
+        refund_status="succeeded",
+        notes=payload.notes
+    )
+    db.add(credit_note)
+    db.commit()
+    db.refresh(credit_note)
+    return credit_note
+
+
+@router.get("/{id}/credit-notes", response_model=List[CreditNoteOut])
+def list_invoice_credit_notes(
+    id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    inv = db.query(Invoice).filter(Invoice.id == id).first()
+    if not inv:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    if current_user.role == UserRole.customer and inv.customer_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return db.query(CreditNote).filter(CreditNote.invoice_id == id).all()
+
 

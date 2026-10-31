@@ -2,6 +2,7 @@
 research-system-main/
 research-system/
 temp reops/
+temp md/
 temp/
 
 # Agent skills, customizations and plugins (CRITICAL: Never commit to GitHub)
