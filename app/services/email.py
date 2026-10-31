@@ -147,10 +147,19 @@ class EmailService:
             <td style="padding: 32px 36px 24px 36px; border-bottom: 1px solid #f1f5f9;">
               <table role="presentation" width="100%">
                 <tr>
-                  <td>
-                    <span style="font-size: 18px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em;">Brightloop Software</span>
+                  <td style="vertical-align: middle;">
+                    <table role="presentation" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td style="vertical-align: middle; padding-right: 12px;">
+                          <img src="https://vzuxwfmpxgkjcjdftuqp.supabase.co/storage/v1/object/public/assets/logo.png" onerror="this.style.display='none'" width="32" height="32" style="border-radius: 6px; display: block;" alt="Logo" />
+                        </td>
+                        <td style="vertical-align: middle;">
+                          <span style="font-size: 18px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em;">Brightloop Software</span>
+                        </td>
+                      </tr>
+                    </table>
                   </td>
-                  <td align="right">
+                  <td align="right" style="vertical-align: middle;">
                     <span style="display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: 600; color: #334155; background-color: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px;">INVOICE</span>
                   </td>
                 </tr>
@@ -240,7 +249,16 @@ class EmailService:
         <table role="presentation" width="100%" style="max-width: 580px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden;">
           <tr>
             <td style="padding: 24px 32px; border-bottom: 1px solid #f1f5f9;">
-              <span style="font-size: 16px; font-weight: 700; color: #0f172a;">Brightloop Software Operations</span>
+              <table role="presentation" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td style="vertical-align: middle; padding-right: 10px;">
+                    <img src="https://vzuxwfmpxgkjcjdftuqp.supabase.co/storage/v1/object/public/assets/logo.png" onerror="this.style.display='none'" width="28" height="28" style="border-radius: 6px; display: block;" alt="Logo" />
+                  </td>
+                  <td style="vertical-align: middle;">
+                    <span style="font-size: 16px; font-weight: 700; color: #0f172a;">Brightloop Software Operations</span>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
           <tr>

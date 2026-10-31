@@ -5,6 +5,9 @@ import React from 'react';
 export const metadata = {
   title: 'Brightloop Software — Subscription Management System',
   description: 'FastAPI + Next.js 15 + Supabase Subscription Management System for Odoo Hackathon',
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 export default function RootLayout({
