@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Brightloop — Enterprise Subscription & Billing Engine</title>
+  <link rel="icon" type="image/png" href="/static/logo.png">
+  <link rel="shortcut icon" href="/static/logo.png">
+  <link rel="apple-touch-icon" href="/static/logo.png">
   
   <!-- Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -260,6 +263,7 @@
       color: var(--tab-active-text) !important;
       border: 1px solid var(--tab-active-border) !important;
       box-shadow: var(--tab-active-shadow) !important;
+      border-radius: 9999px !important;
       font-weight: 600;
     }
     .tab-pill-inactive {
@@ -267,6 +271,7 @@
       color: var(--tab-inactive-text) !important;
       border: 1px solid transparent !important;
       box-shadow: none !important;
+      border-radius: 9999px !important;
       font-weight: 500;
     }
     .tab-pill-inactive:hover {
@@ -290,73 +295,61 @@
 </head>
 <body class="min-h-screen antialiased selection:bg-zinc-500/20">
 
-  <!-- ==================== PROFESSIONAL NAVBAR (LINEAR / VERCEL STYLE) ==================== -->
-  <header class="sticky top-0 z-40 border-b nav-theme px-5 sm:px-8 py-3 transition-colors duration-150">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
+  <!-- ==================== FLOATING CAPSULE NAVBAR (SCREENSHOT 2 RAPID AI STYLE) ==================== -->
+  <header class="sticky top-3 sm:top-5 z-40 px-3 sm:px-6 max-w-6xl mx-auto transition-all">
+    <div class="bg-zinc-900/95 dark:bg-[#0c0d14]/95 backdrop-blur-2xl border border-black/10 dark:border-white/10 rounded-full px-3.5 sm:px-6 py-2 shadow-2xl flex items-center justify-between gap-3">
       
-      <!-- Brand & Workspace Segment -->
-      <div class="flex items-center space-x-3.5">
-        <!-- Modern Geometric Logo Mark -->
-        <div class="w-8 h-8 rounded-lg bg-black text-white dark:bg-white dark:text-black flex items-center justify-center font-bold shadow-sm">
-          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
-        </div>
-        <div class="flex items-center space-x-2">
-          <span class="font-bold text-sm tracking-tight text-primary-theme">Brightloop</span>
-          <span class="text-xs text-muted-theme">/</span>
-          <div class="flex items-center space-x-1.5 px-2.5 py-1 rounded-md well-theme text-xs font-medium text-secondary-theme cursor-default">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            <span>Billing Engine</span>
-            <span class="text-[10px] font-mono font-semibold px-1 py-0.2 rounded bg-black/5 dark:bg-white/10 text-muted-theme">v3.0</span>
+      <!-- Left: Logo & Brand -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+        <img src="/static/logo.png" alt="Brightloop Logo" class="w-8 h-8 rounded-lg object-contain" />
+        <div class="flex flex-col">
+          <div class="flex items-center space-x-1.5">
+            <span class="font-extrabold text-xs sm:text-sm tracking-wider text-primary-theme uppercase leading-none">BRIGHTLOOP</span>
+            <span class="text-[9px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">AI</span>
           </div>
+          <span class="text-[9px] font-mono tracking-widest text-muted-theme uppercase mt-0.5">BILLING COPILOT</span>
         </div>
       </div>
 
-      <!-- Center Segmented Navigation Pills -->
-      <nav class="hidden md:flex items-center space-x-1 p-1 rounded-xl tab-wrapper-theme">
-        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs transition-all tab-pill-active">
+      <!-- Center: Capsule Navigation Pills -->
+      <nav class="hidden md:flex items-center space-x-1 p-1 rounded-full tab-wrapper-theme">
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn px-4 py-1.5 rounded-full text-xs font-semibold transition-all tab-pill-active">
           Dashboard
         </button>
-        <button onclick="switchTab('operations')" id="tab-operations" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs transition-all tab-pill-inactive">
+        <button onclick="switchTab('operations')" id="tab-operations" class="tab-btn px-4 py-1.5 rounded-full text-xs font-semibold transition-all tab-pill-inactive">
           Operations
         </button>
-        <button onclick="switchTab('customer')" id="tab-customer" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs transition-all tab-pill-inactive">
+        <button onclick="switchTab('customer')" id="tab-customer" class="tab-btn px-4 py-1.5 rounded-full text-xs font-semibold transition-all tab-pill-inactive">
           Customer Portal
         </button>
-        <button onclick="switchTab('judge-demo')" id="tab-judge-demo" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs transition-all tab-pill-inactive">
+        <button onclick="switchTab('judge-demo')" id="tab-judge-demo" class="tab-btn px-4 py-1.5 rounded-full text-xs font-semibold transition-all tab-pill-inactive">
           Verification Suite
         </button>
       </nav>
 
-      <!-- Right Utilities -->
-      <div class="flex items-center space-x-2.5">
-        <!-- Quick Search Pill (⌘K) -->
-        <button onclick="openCommandPalette()" class="hidden sm:flex items-center space-x-2 px-2.5 py-1.5 rounded-lg btn-ghost-theme text-xs">
-          <i data-lucide="search" class="w-3.5 h-3.5 text-muted-theme"></i>
-          <span class="text-secondary-theme">Search</span>
-          <kbd class="text-[10px] font-mono px-1 py-0.5 rounded well-theme text-muted-theme">⌘K</kbd>
+      <!-- Right: Action Buttons (Exact Replica of Screenshot 2 Style) -->
+      <div class="flex items-center space-x-2">
+        <!-- Glowing Primary Pill Button ('Run Billing' - like 'Start Talking' in screenshot 2) -->
+        <button id="btn-run-billing-nav" onclick="triggerMassBilling()" class="px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/25 transition-all flex items-center space-x-1.5">
+          <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+          <span>Run Billing</span>
         </button>
 
-        <!-- System Status Indicator -->
-        <div class="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded-full well-theme text-[11px]">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span class="text-secondary-theme font-medium">Operational</span>
-          <span class="text-muted-theme font-mono text-[10px]" id="nav-latency">14ms</span>
-        </div>
-
-        <!-- Theme Switcher (Pure White / Light Black) -->
-        <button onclick="toggleTheme()" class="p-2 rounded-lg btn-ghost-theme" title="Toggle Theme">
-          <i data-lucide="sun" id="theme-icon" class="w-4 h-4 text-secondary-theme"></i>
+        <!-- Secondary Outlined Pill Button ('Account' - like 'Patient Status' in screenshot 2) -->
+        <button id="btn-auth-nav" onclick="openModal('modal-auth')" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/5 hover:bg-white/10 border border-black/10 dark:border-white/15 text-primary-theme transition-all flex items-center space-x-1.5">
+          <i data-lucide="user" class="w-3.5 h-3.5"></i>
+          <span id="auth-btn-label">Account</span>
         </button>
 
-        <!-- Admin Profile Pill -->
-        <div class="flex items-center space-x-2 pl-2 border-l" style="border-color: var(--nav-border)">
-          <div class="w-7 h-7 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 flex items-center justify-center font-bold text-xs ring-1 ring-black/5 dark:ring-white/10">
-            A
-          </div>
-          <span class="hidden xl:inline text-xs font-semibold text-secondary-theme">Admin</span>
-        </div>
+        <!-- Search (⌘K) -->
+        <button id="btn-quick-search" onclick="openCommandPalette()" class="hidden sm:flex p-1.5 rounded-full hover:bg-white/10 text-muted-theme hover:text-primary-theme transition-colors" title="Search (⌘K)">
+          <i data-lucide="search" class="w-3.5 h-3.5"></i>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="btn-theme-toggle" onclick="toggleTheme()" class="p-1.5 rounded-full hover:bg-white/10 text-secondary-theme transition-colors" title="Toggle Light/Dark Theme">
+          <i data-lucide="sun" id="theme-icon" class="w-4 h-4"></i>
+        </button>
       </div>
 
     </div>
@@ -1149,6 +1142,77 @@
     </div>
   </div>
 
+  <!-- Modal 6: Auth Modal (Sign In / Register with Logo) -->
+  <div id="modal-auth" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm hidden">
+    <div class="card-theme rounded-3xl w-full max-w-md p-6 sm:p-8 space-y-5 relative shadow-2xl border border-black/10 dark:border-white/10">
+      <button onclick="closeModal('modal-auth')" class="absolute top-4 right-4 p-1.5 rounded-full btn-ghost-theme">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Logo & Heading -->
+      <div class="text-center space-y-2">
+        <img src="/static/logo.png" alt="Brightloop Logo" class="w-12 h-12 mx-auto object-contain rounded-2xl shadow-lg border border-black/10 dark:border-white/10 p-1 bg-white/5" />
+        <h3 class="text-lg font-bold text-primary-theme tracking-tight">Brightloop Software</h3>
+        <p class="text-xs text-muted-theme">Enterprise Subscription Management & Commercial Engine</p>
+      </div>
+
+      <!-- Segmented Auth Tabs -->
+      <div class="flex p-1 rounded-full well-theme text-xs font-semibold">
+        <button id="auth-tab-login" onclick="switchAuthTab('login')" class="flex-1 py-1.5 rounded-full text-primary-theme bg-white/10 shadow-sm transition-all text-center">Sign In</button>
+        <button id="auth-tab-register" onclick="switchAuthTab('register')" class="flex-1 py-1.5 rounded-full text-muted-theme hover:text-primary-theme transition-all text-center">Create Account</button>
+      </div>
+
+      <!-- Google OAuth SSO Button (Supabase Auth) -->
+      <button onclick="signInWithGoogle()" class="w-full py-2.5 rounded-full border border-black/10 dark:border-white/15 bg-white/5 hover:bg-white/10 text-primary-theme text-xs font-semibold flex items-center justify-center space-x-2 transition-all shadow-sm">
+        <svg class="w-4 h-4" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>Continue with Google (Supabase SSO)</span>
+      </button>
+
+      <div class="flex items-center my-2">
+        <div class="flex-grow border-t border-black/10 dark:border-white/10"></div>
+        <span class="flex-shrink mx-3 text-[10px] uppercase font-mono text-muted-theme">Or with credentials</span>
+        <div class="flex-grow border-t border-black/10 dark:border-white/10"></div>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="form-login" onsubmit="handleAuthLogin(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-semibold text-secondary-theme mb-1">Email Address</label>
+          <input type="email" id="auth-login-email" required placeholder="admin@brightloop.com" value="admin@brightloop.com" class="w-full px-3.5 py-2 rounded-xl input-theme text-xs" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-secondary-theme mb-1">Password</label>
+          <input type="password" id="auth-login-password" required placeholder="••••••••••••" value="Admin@Brightloop2026!" class="w-full px-3.5 py-2 rounded-xl input-theme text-xs" />
+        </div>
+        <button type="submit" class="w-full py-2.5 rounded-full btn-tactile-grey text-xs font-bold shadow-md">Sign In</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="form-register" onsubmit="handleAuthRegister(event)" class="space-y-3.5 hidden">
+        <div>
+          <label class="block text-xs font-semibold text-secondary-theme mb-1">Full Name</label>
+          <input type="text" id="auth-reg-name" placeholder="Alex Rivera" class="w-full px-3.5 py-2 rounded-xl input-theme text-xs" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-secondary-theme mb-1">Work Email</label>
+          <input type="email" id="auth-reg-email" placeholder="alex@company.com" class="w-full px-3.5 py-2 rounded-xl input-theme text-xs" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-secondary-theme mb-1">Password (&gt;8 chars, uppercase, lowercase, special char)</label>
+          <input type="password" id="auth-reg-password" placeholder="StrictPassword2026!" class="w-full px-3.5 py-2 rounded-xl input-theme text-xs" />
+        </div>
+        <button type="submit" class="w-full py-2.5 rounded-full btn-tactile-grey text-xs font-bold shadow-md">Create Account</button>
+      </form>
+
+      <div id="auth-status-msg" class="text-center text-xs font-medium text-emerald-400 hidden"></div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
 
@@ -1211,7 +1275,7 @@
         else closeModal('modal-command-palette');
       }
       if (e.key === 'Escape') {
-        ['modal-create-plan', 'modal-create-product', 'modal-create-quotation', 'modal-invoice-detail', 'modal-command-palette'].forEach(closeModal);
+        ['modal-create-plan', 'modal-create-product', 'modal-create-quotation', 'modal-invoice-detail', 'modal-command-palette', 'modal-auth'].forEach(closeModal);
       }
     });
 
@@ -1249,12 +1313,12 @@
         if (id === tabId) {
           view.classList.remove('hidden');
           if (btn) {
-            btn.className = "tab-btn px-3.5 py-1.5 rounded-lg text-xs transition-all tab-pill-active";
+            btn.className = "tab-btn px-4 py-1.5 rounded-full text-xs font-semibold transition-all tab-pill-active";
           }
         } else {
           view.classList.add('hidden');
           if (btn) {
-            btn.className = "tab-btn px-3.5 py-1.5 rounded-lg text-xs transition-all tab-pill-inactive";
+            btn.className = "tab-btn px-4 py-1.5 rounded-full text-xs font-semibold transition-all tab-pill-inactive";
           }
         }
       });
@@ -1441,6 +1505,30 @@
       }
     }
 
+    let allSubscriptions = [];
+    let allInvoices = [];
+    let activeStateFilter = 'all';
+
+    // State Filter for Operations Ledger
+    function filterByState(state) {
+      activeStateFilter = state.toLowerCase();
+      document.querySelectorAll('.state-filter-pill').forEach(btn => {
+        if (btn.innerText.toLowerCase() === activeStateFilter) {
+          btn.className = "state-filter-pill px-3 py-1 rounded-lg btn-tactile-grey font-semibold";
+        } else {
+          btn.className = "state-filter-pill px-3 py-1 rounded-lg btn-ghost-theme text-muted-theme";
+        }
+      });
+      renderSubscriptionsTable();
+    }
+
+    // Unified Search for Subscriptions and Invoices
+    function filterOperationsTables() {
+      const q = (document.getElementById('operations-search').value || '').toLowerCase().trim();
+      renderSubscriptionsTable(q);
+      renderInvoicesTable(q);
+    }
+
     // Load Subscriptions
     async function loadSubscriptions() {
       const token = await ensureAdminToken();
@@ -1450,33 +1538,52 @@
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
-          const subs = await res.json();
-          if (subs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-muted-theme">No active subscriptions yet. Create one via Quotation!</td></tr>';
-            return;
-          }
-          tbody.innerHTML = subs.map(s => `
-            <tr class="hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
-              <td class="py-3 font-mono text-primary-theme font-bold">${s.subscription_number}</td>
-              <td class="text-secondary-theme font-mono text-[11px]">${s.customer_id.substring(0, 8)}...</td>
-              <td>
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                  s.state === 'active' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' :
-                  s.state === 'paused' ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30' :
-                  'well-theme text-muted-theme'
-                }">${s.state.toUpperCase()}</span>
-              </td>
-              <td class="text-secondary-theme">${s.next_invoice_date || 'N/A'}</td>
-              <td class="text-right space-x-1">
-                ${s.state === 'active' ? `<button onclick="pauseSubscription('${s.id}')" class="px-2.5 py-1 rounded btn-ghost-theme text-[10px] font-semibold text-amber-600 dark:text-amber-400">Pause</button>` : ''}
-                ${s.state === 'paused' ? `<button onclick="resumeSubscription('${s.id}')" class="px-2.5 py-1 rounded btn-ghost-theme text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">Resume</button>` : ''}
-              </td>
-            </tr>
-          `).join('');
+          allSubscriptions = await res.json();
+          renderSubscriptionsTable();
         }
       } catch (e) {
         tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-rose-500">Failed to fetch subscriptions</td></tr>';
       }
+    }
+
+    function renderSubscriptionsTable(searchQuery = '') {
+      const tbody = document.getElementById('sub-table-body');
+      if (!tbody) return;
+      const q = searchQuery || (document.getElementById('operations-search') ? document.getElementById('operations-search').value.toLowerCase().trim() : '');
+      
+      let filtered = allSubscriptions;
+      if (activeStateFilter !== 'all') {
+        filtered = filtered.filter(s => (s.state || '').toLowerCase() === activeStateFilter);
+      }
+      if (q) {
+        filtered = filtered.filter(s => 
+          (s.subscription_number || '').toLowerCase().includes(q) ||
+          (s.customer_id || '').toLowerCase().includes(q) ||
+          (s.state || '').toLowerCase().includes(q)
+        );
+      }
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-muted-theme">No subscriptions match criteria.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filtered.map(s => `
+        <tr class="hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
+          <td class="py-3 font-mono text-primary-theme font-bold">${s.subscription_number}</td>
+          <td class="text-secondary-theme font-mono text-[11px]">${s.customer_id.substring(0, 8)}...</td>
+          <td>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+              s.state === 'active' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' :
+              s.state === 'paused' ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30' :
+              'well-theme text-muted-theme'
+            }">${s.state.toUpperCase()}</span>
+          </td>
+          <td class="text-secondary-theme">${s.next_invoice_date || 'N/A'}</td>
+          <td class="text-right space-x-1">
+            ${s.state === 'active' ? `<button onclick="pauseSubscription('${s.id}')" class="px-2.5 py-1 rounded btn-ghost-theme text-[10px] font-semibold text-amber-600 dark:text-amber-400">Pause</button>` : ''}
+            ${s.state === 'paused' ? `<button onclick="resumeSubscription('${s.id}')" class="px-2.5 py-1 rounded btn-ghost-theme text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">Resume</button>` : ''}
+          </td>
+        </tr>
+      `).join('');
     }
 
     async function pauseSubscription(id) {
@@ -1513,33 +1620,48 @@
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
-          const invs = await res.json();
-          if (invs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-muted-theme">No invoices generated yet</td></tr>';
-            return;
-          }
-          tbody.innerHTML = invs.map(i => `
-            <tr class="hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
-              <td class="py-3 font-mono text-primary-theme font-bold">${i.invoice_number}</td>
-              <td>
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                  i.status === 'paid' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' :
-                  i.status === 'confirmed' ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30' :
-                  'well-theme text-muted-theme'
-                }">${i.status.toUpperCase()}</span>
-              </td>
-              <td class="font-mono text-primary-theme font-semibold">$${parseFloat(i.amount_total).toFixed(2)}</td>
-              <td class="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">$${parseFloat(i.amount_paid || 0).toFixed(2)}</td>
-              <td class="text-right space-x-1.5">
-                <button onclick="viewInvoiceDetail('${i.id}')" class="px-2.5 py-1 rounded btn-ghost-theme text-[10px] font-semibold">Details</button>
-                ${i.status === 'draft' ? `<button onclick="confirmInvoice('${i.id}')" class="px-2.5 py-1 rounded btn-tactile-grey text-[10px] font-semibold">Confirm</button>` : ''}
-              </td>
-            </tr>
-          `).join('');
+          allInvoices = await res.json();
+          renderInvoicesTable();
         }
       } catch (e) {
         tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-rose-500">Failed to fetch invoices</td></tr>';
       }
+    }
+
+    function renderInvoicesTable(searchQuery = '') {
+      const tbody = document.getElementById('invoice-table-body');
+      if (!tbody) return;
+      const q = searchQuery || (document.getElementById('operations-search') ? document.getElementById('operations-search').value.toLowerCase().trim() : '');
+      let filtered = allInvoices;
+      if (q) {
+        filtered = filtered.filter(i => 
+          (i.invoice_number || '').toLowerCase().includes(q) ||
+          (i.status || '').toLowerCase().includes(q) ||
+          String(i.amount_total || '').includes(q)
+        );
+      }
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-muted-theme">No invoices match criteria.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filtered.map(i => `
+        <tr class="hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
+          <td class="py-3 font-mono text-primary-theme font-bold">${i.invoice_number}</td>
+          <td>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+              i.status === 'paid' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30' :
+              i.status === 'confirmed' ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30' :
+              'well-theme text-muted-theme'
+            }">${i.status.toUpperCase()}</span>
+          </td>
+          <td class="font-mono text-primary-theme font-semibold">$${parseFloat(i.amount_total).toFixed(2)}</td>
+          <td class="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">$${parseFloat(i.amount_paid || 0).toFixed(2)}</td>
+          <td class="text-right space-x-1.5">
+            <button onclick="viewInvoiceDetail('${i.id}')" class="px-2.5 py-1 rounded btn-ghost-theme text-[10px] font-semibold">Details</button>
+            ${i.status === 'draft' ? `<button onclick="confirmInvoice('${i.id}')" class="px-2.5 py-1 rounded btn-tactile-grey text-[10px] font-semibold">Confirm</button>` : ''}
+          </td>
+        </tr>
+      `).join('');
     }
 
     async function confirmInvoice(id) {
@@ -1923,6 +2045,85 @@
         btn.innerText = 'Run 7-Step Verification Suite Again';
         refreshDashboard();
       }
+    }
+
+    // Auth Modal Handlers (Sign In, Sign Up, Google OAuth)
+    function switchAuthTab(tab) {
+      const loginTab = document.getElementById('auth-tab-login');
+      const regTab = document.getElementById('auth-tab-register');
+      const formLogin = document.getElementById('form-login');
+      const formReg = document.getElementById('form-register');
+      if (tab === 'login') {
+        loginTab.className = "flex-1 py-1.5 rounded-full text-primary-theme bg-white/10 shadow-sm transition-all text-center";
+        regTab.className = "flex-1 py-1.5 rounded-full text-muted-theme hover:text-primary-theme transition-all text-center";
+        formLogin.classList.remove('hidden');
+        formReg.classList.add('hidden');
+      } else {
+        regTab.className = "flex-1 py-1.5 rounded-full text-primary-theme bg-white/10 shadow-sm transition-all text-center";
+        loginTab.className = "flex-1 py-1.5 rounded-full text-muted-theme hover:text-primary-theme transition-all text-center";
+        formReg.classList.remove('hidden');
+        formLogin.classList.add('hidden');
+      }
+    }
+
+    async function handleAuthLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-login-email').value;
+      const password = document.getElementById('auth-login-password').value;
+      try {
+        const res = await fetch('/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          authToken = data.access_token;
+          localStorage.setItem('bt_token', authToken);
+          showToast(`Welcome back, ${data.full_name || data.email}!`, 'success');
+          document.getElementById('auth-btn-label').innerText = data.role.toUpperCase();
+          closeModal('modal-auth');
+          refreshDashboard();
+        } else {
+          const err = await res.json();
+          showToast(`Login failed: ${err.detail || 'Invalid credentials'}`, 'error');
+        }
+      } catch (err) {
+        showToast(`Login network error: ${err.message}`, 'error');
+      }
+    }
+
+    async function handleAuthRegister(e) {
+      e.preventDefault();
+      const fullName = document.getElementById('auth-reg-name').value;
+      const email = document.getElementById('auth-reg-email').value;
+      const password = document.getElementById('auth-reg-password').value;
+      try {
+        const res = await fetch('/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, full_name: fullName })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          authToken = data.access_token;
+          localStorage.setItem('bt_token', authToken);
+          showToast(`Account created successfully for ${email}!`, 'success');
+          document.getElementById('auth-btn-label').innerText = data.role.toUpperCase();
+          closeModal('modal-auth');
+          refreshDashboard();
+        } else {
+          const err = await res.json();
+          showToast(`Registration failed: ${err.detail || 'Password policy not satisfied'}`, 'error');
+        }
+      } catch (err) {
+        showToast(`Register network error: ${err.message}`, 'error');
+      }
+    }
+
+    function signInWithGoogle() {
+      const supabaseUrl = "https://vzuxwfmpxgkjcjdftuqp.supabase.co";
+      window.location.href = `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(window.location.origin)}`;
     }
 
     // Initial Dashboard Load

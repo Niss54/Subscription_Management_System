@@ -73,10 +73,10 @@ def customer_self_checkout(
     current_user: User = Depends(get_current_user)
 ):
     """Customer self-service online checkout (Card / UPI / NetBanking settlement)."""
-    invoice = db.query(Invoice).filter(
-        Invoice.id == str(payload.invoice_id),
-        Invoice.customer_id == current_user.id
-    ).first()
+    query = db.query(Invoice).filter(Invoice.id == str(payload.invoice_id))
+    if current_user.role.value == "customer":
+        query = query.filter(Invoice.customer_id == current_user.id)
+    invoice = query.first()
     if not invoice:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invoice not found or does not belong to you")
     if invoice.status == InvoiceStatus.cancelled:
