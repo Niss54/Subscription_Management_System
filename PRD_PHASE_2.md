@@ -1,10 +1,10 @@
 # ⚡ PRD PHASE 2: Quotations, Subscription State Machine & Automated Billing Engine
 ## Brightloop Software Subscription Billing Platform (Hackathon Winning Blueprint)
 
-> **Document Version:** 1.0.0 (Production Engineering Specification)  
+> **Document Version:** 2.0.0 (Production Implementation Specification)  
 > **Engineering Mode:** GRAVITAS Invariant-Enforced Implementation  
 > **Target SLA:** 100% Deterministic Recurring Invoicing (Zero Double-Billing)  
-> **Phase Scope:** Quotation Templates, Subscription Lifecycle, Cron Billing Worker, Taxes & Discounts  
+> **Phase Scope:** Quotation Templates, Subscription Lifecycle, Cron Billing Worker, Taxes & Discounts, Step-by-Step Build Plan  
 
 ---
 
@@ -19,19 +19,20 @@ Phase 2 constitutes the operational heart of Brightloop Software. It automates t
 2. **Robust Subscription State Machine:**
    - Strict 6-state lifecycle: `Draft` $\rightarrow$ `Quotation` $\rightarrow$ `Confirmed` $\rightarrow$ `Active` $\rightarrow$ `Paused` $\rightarrow$ `Closed`.
    - Enforcement of plan policy flags (`can_be_paused`, `auto_close_at_end`, `can_be_closed_early`).
+   - Unique sequential numbering: `SUB-2026-XXXX`.
 3. **Automated Recurring Billing Engine (The "Billing Day" Solution):**
    - Scheduled background worker scanning `next_invoice_date <= CURRENT_DATE`.
-   - Concurrency protection: `SELECT ... FOR UPDATE SKIP LOCKED`.
+   - Concurrency protection: `SELECT ... FOR UPDATE SKIP LOCKED` (Postgres) / Transactional Lock (SQLite).
    - Immutability & double-billing prevention: Deterministic SHA-256 Idempotency Keys.
 4. **Dynamic Discount & Tax Engine:**
    - Fixed vs Percentage discounts.
    - Scope: Specific product lines vs entire subscription subtotal.
    - Thresholds: Minimum purchase amount or minimum seats/quantity.
+   - Proportional tax apportionment across multi-rate tax items.
    - Automatic expiration and atomic `max_uses` concurrency protection.
-   - Automated tax rule computation on net discounted amounts.
 5. **Invoice Management:**
    - State progression: `Draft` $\rightarrow$ `Confirmed` $\rightarrow$ `Paid` / `Cancelled`.
-   - Team actions: Confirm, Cancel, Send (email notification), Print (PDF render).
+   - Team actions: Confirm, Cancel, Send (simulated dispatch), Print (PDF / printable layout).
 
 ---
 
@@ -96,6 +97,18 @@ erDiagram
         string idempotency_key UK "SHA256 Hash"
     }
 
+    INVOICE_LINES {
+        uuid id PK
+        uuid invoice_id FK
+        uuid variant_id FK
+        string description
+        numeric quantity
+        numeric unit_price
+        numeric discount_amount
+        numeric tax_amount
+        numeric line_total
+    }
+
     DISCOUNT_RULES {
         uuid id PK
         string code UK
@@ -110,6 +123,13 @@ erDiagram
         string scope "subscription | product"
         uuid target_product_id FK
         boolean is_active
+    }
+
+    TAX_RULES {
+        uuid id PK
+        string name
+        numeric rate "Percentage e.g. 18.00"
+        string applicable_category
     }
 ```
 
@@ -173,12 +193,21 @@ To completely eradicate double billing during mass billing runs:
    $$\text{Idempotency Key} = \text{SHA256}(\text{subscription\_id} + \text{": "} + \text{period\_start} + \text{": "} + \text{period\_end})$$
    A database-level `UNIQUE` constraint on `invoices.idempotency_key` guarantees that even under network partitions or worker crashes, duplicate invoices fail with an explicit integrity violation.
 
-### 4.2 Tax & Discount Ordering Formula
-Tax compliance mandates:
-$$\text{Gross Subtotal} = \sum (\text{Line.quantity} \times \text{Line.unit\_price})$$
-$$\text{Taxable Base} = \max(0, \text{Gross Subtotal} - \text{Discount})$$
-$$\text{Tax Amount} = \text{Taxable Base} \times \text{Tax Rate}$$
-$$\text{Final Total} = \text{Taxable Base} + \text{Tax Amount}$$
+### 4.2 Tax & Discount Ordering Formula (Proportional Apportionment)
+When a subscription-level discount applies across multiple items with different tax rates:
+1. Compute gross line subtotals: $L_i = Q_i \times P_i$.
+2. Compute gross total: $G = \sum L_i$.
+3. Compute discount:
+   - If percentage: $D_i = L_i \times \frac{\text{discount\_rate}}{100}$.
+   - If fixed: $D_i = \text{round}\left(\text{Total Discount} \times \frac{L_i}{G}, 4\right)$.
+4. Compute line taxable base: $B_i = \max(0, L_i - D_i)$.
+5. Compute line tax: $T_i = B_i \times \frac{\text{Tax Rate}_i}{100}$.
+6. Line Total: $TOT_i = B_i + T_i$.
+7. Invoice Totals:
+   $$\text{amount\_untaxed} = \sum L_i$$
+   $$\text{amount\_discount} = \sum D_i$$
+   $$\text{amount\_tax} = \sum T_i$$
+   $$\text{amount\_total} = \sum TOT_i$$
 
 ### 4.3 Atomic Discount Usage Lock
 To prevent concurrency abuse when a discount has a limit (e.g., first 50 customers):
@@ -194,22 +223,50 @@ If 0 rows are returned, the discount is exhausted and must not be applied to the
 
 ---
 
-## 5. API Endpoints Specification (Phase 2)
+## 5. End-to-End Implementation Plan (Phase 2)
 
-| Method | Endpoint | Allowed Roles | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/quotation-templates` | Admin, Staff | List quotation templates. |
-| `POST` | `/api/quotation-templates` | Admin Only | Create quotation template with product lines. |
-| `POST` | `/api/subscriptions` | Staff, Admin | Create new subscription in `draft` state (optionally from template). |
-| `POST` | `/api/subscriptions/{id}/transition` | Staff, Admin | Execute validated state transition (`draft` $\rightarrow$ `quotation`, etc.). |
-| `POST` | `/api/subscriptions/{id}/pause` | Staff, Admin | Pause subscription (enforces plan policy). |
-| `POST` | `/api/subscriptions/{id}/resume` | Staff, Admin | Resume subscription & recalibrate next invoice date. |
-| `POST` | `/api/discounts` | Admin Only | Create discount rule (percentage, fixed, thresholds, max uses). |
-| `POST` | `/api/invoices/trigger-billing-run` | Admin Only | Manually invoke recurring billing cron cycle. |
-| `POST` | `/api/invoices/{id}/confirm` | Staff, Admin | Confirm draft invoice and post to customer ledger. |
-| `POST` | `/api/invoices/{id}/cancel` | Staff, Admin | Cancel invoice and void accounting entry. |
-| `POST` | `/api/invoices/{id}/send` | Staff, Admin | Dispatch email notification with invoice summary. |
-| `GET` | `/api/invoices/{id}/print` | All Authenticated | Render printable invoice artifact. |
+### Step 2.1: Quotation Template Engine
+- Implement `models/quotation_template.py` linking template header and child lines.
+- Implement `services/quotation_service.py`:
+  - `create_quotation_from_template(template_id, customer_id)`: clones lines, sets default terms, calculates `expiry_date = today + validity_days`.
+  - Generates unique sequence number: `SUB-2026-XXXX`.
+
+### Step 2.2: State Machine Implementation
+- Implement `core/state_machine.py`:
+  - State transition validator enforcing legal pathways.
+  - Guard checks: validity date on confirmation, `can_be_paused` flag on pause, `can_be_closed_early` on cancellation.
+  - Pause duration tracking with automatic date recalibration upon resumption.
+
+### Step 2.3: Tax & Dynamic Discount Engine
+- Implement `services/tax_service.py` to retrieve tax rules by product category.
+- Implement `services/discount_service.py`:
+  - Evaluates start/end date, min purchase amount, min quantity, and remaining usage capacity.
+  - Implements proportional discount apportionment formula across line items.
+  - Manages atomic increment of `current_uses`.
+
+### Step 2.4: Mass Invoicing Background Worker
+- Implement `workers/billing_worker.py`:
+  - Scans active subscriptions where `next_invoice_date <= CURRENT_DATE`.
+  - Generates SHA-256 idempotency key: `SHA256(sub_id + str(period_start) + str(period_end))`.
+  - Atomically creates `Invoice` in `draft` state and advances subscription `next_invoice_date` according to plan frequency (`daily`, `weekly`, `monthly`, `yearly`).
+  - Provides manual trigger endpoint for admin testing: `POST /api/invoices/trigger-billing-run`.
+
+### Step 2.5: Invoice Management & Actions
+- Implement `services/invoice_service.py`:
+  - State transitions: `draft` $\rightarrow$ `confirmed` $\rightarrow$ `paid` / `cancelled`.
+  - Actions: Confirm, Cancel, Send (simulated dispatch), Print (HTML printable template).
+
+### Step 2.6: Verification & Automated Tests
+- Create `tests/test_phase2_billing_engine.py`:
+  - Test 1: Quotation expiration guard (quote past expiry date cannot be confirmed).
+  - Test 2: State machine pause guard (plan with `can_be_paused=False` rejects pause).
+  - Test 3: Idempotent billing run (triggering billing 5 times generates exactly 1 invoice per due subscription).
+  - Test 4: Dynamic discount auto-expiry and max uses exhaustion.
+  - Test 5: Tax calculation order-of-operations (taxes applied to net discounted amount).
+
+### Step 2.7: Git Commit Milestone
+- Run test suite: `pytest tests/test_phase2_billing_engine.py -v`.
+- Commit message: `feat(phase2): implement quotation lifecycle, subscription state machine, automated billing worker, taxes, and dynamic discounts`.
 
 ---
 

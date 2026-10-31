@@ -1,10 +1,10 @@
 # 🚀 PRD PHASE 1: System Foundation, Identity, Catalog & Billing Plans
 ## Brightloop Software Subscription Billing Platform (Hackathon Winning Blueprint)
 
-> **Document Version:** 1.0.0 (Production Engineering Specification)  
+> **Document Version:** 2.0.0 (Production Implementation Specification)  
 > **Engineering Mode:** GRAVITAS Invariant-Enforced Implementation  
 > **Target SLA:** 100% Functional Compliance with Brightloop Problem Statement  
-> **Phase Scope:** Identity, RBAC, Security, Product Catalog, Brand Variants, Plan Rules  
+> **Phase Scope:** Identity, RBAC, Security, Product Catalog, Brand Variants, Plan Rules, Step-by-Step Build Plan  
 
 ---
 
@@ -15,8 +15,8 @@ Phase 1 establishes the rock-solid foundation for the entire Subscription Manage
 ### Core Deliverables in Phase 1
 1. **Cryptographically Secure Auth & RBAC:**
    - Password policy: $> 8$ characters, at least 1 uppercase, 1 lowercase, 1 special character.
-   - Password hashing: **Argon2id** (or bcrypt cost 12).
-   - Single-use, time-bound (15-min) password reset tokens.
+   - Password hashing: **Argon2id** / **bcrypt** (cost factor 12).
+   - Single-use, time-bound (15-min) password reset tokens stored as SHA-256 hashes.
    - Multi-role isolation: `admin` (super-user), `staff` (day-to-day operations), `customer` (self-service portal).
 2. **Product Catalog with Dynamic Variant Surcharges:**
    - Base products with sales price, cost price, type (`software`, `service`, `addon`), and notes.
@@ -26,6 +26,9 @@ Phase 1 establishes the rock-solid foundation for the entire Subscription Manage
    - Minimum seat/quantity enforcement.
    - Granular plan behavior toggles: `can_be_paused`, `can_be_renewed`, `can_be_closed_early`, `auto_close_at_end`.
    - Date-bound availability windows (`available_from`, `available_to`).
+4. **Dual Database Architecture (Judge Zero-Friction Engine):**
+   - Default SQLite database for instant zero-dependency execution on judge evaluation environments.
+   - Production PostgreSQL compatibility with identical ORM models and schema invariants.
 
 ---
 
@@ -38,8 +41,8 @@ erDiagram
     USERS ||--o{ PASSWORD_RESET_TOKENS : "requests"
     USERS {
         uuid id PK
-        string email UK "Unique, valid format"
-        string password_hash "Argon2id"
+        string email UK "Unique, case-insensitive"
+        string password_hash "bcrypt / Argon2id"
         string role "admin | staff | customer"
         string full_name
         boolean is_active
@@ -142,7 +145,53 @@ $$\text{Effective Unit Price} = \text{Product.base\_sales\_price} + \sum \text{V
 
 ---
 
-## 5. Acceptance Criteria & Gravitas Verification Contract (Phase 1)
+## 5. End-to-End Implementation Plan (Phase 1)
+
+### Step 1.1: Project Setup & Core Configuration
+- Initialize Python environment with `fastapi`, `uvicorn`, `sqlalchemy`, `pydantic`, `python-jose`, `passlib[bcrypt]`, `pytest`.
+- Configure `core/config.py` supporting dual database URLs:
+  - SQLite default: `sqlite:///./brightloop.db`
+  - PostgreSQL override: `postgresql://user:pass@localhost:5432/brightloop`
+- Establish centralized error handlers returning standardized JSON errors:
+  ```json
+  {"status": "error", "code": "VALIDATION_FAILED", "message": "Password must contain uppercase, lowercase, and special character"}
+  ```
+
+### Step 1.2: Database Models & Migrations
+- Implement SQLAlchemy 2.0 declarative models in `models/identity.py`, `models/catalog.py`, `models/plans.py`.
+- Enforce `NUMERIC(16, 4)` for all currency columns (`base_sales_price`, `cost_price`, `price_extra`).
+- Create initial Alembic / SQLAlchemy metadata tables creation script.
+
+### Step 1.3: Authentication & Security Services
+- Implement `services/auth_service.py`:
+  - `validate_password_complexity(password: str) -> bool`
+  - `hash_password(raw: str) -> str`
+  - `verify_password(raw: str, hashed: str) -> bool`
+  - `generate_reset_token(user_id: str) -> str`
+  - `verify_reset_token(token: str) -> Optional[User]`
+- Implement JWT token generator with `role`, `user_id`, `email`, and 24-hour expiration.
+- Implement FastAPI security dependency `get_current_user` and role-guard factory `require_role(["admin"])`.
+
+### Step 1.4: Catalog & Plan Engine
+- Implement `services/catalog_service.py` with transactional CRUD operations.
+- Implement variant resolution algorithm calculating `effective_unit_price`.
+- Implement `services/plan_service.py` enforcing date-window and quantity validations.
+
+### Step 1.5: Verification & Automated Tests
+- Create `tests/test_phase1_auth_catalog.py`:
+  - Test 1: Password regex rejections (e.g., `pass123`, `Password123`, `Pass!`).
+  - Test 2: Successful registration and login with JWT issue.
+  - Test 3: Password reset flow (generate token, reset password, verify old token fails on 2nd attempt).
+  - Test 4: RBAC restriction (Staff cannot create staff, customer cannot create products).
+  - Test 5: Product + Odoo Variant (+560) unit price calculation.
+
+### Step 1.6: Git Commit Milestone
+- Run test suite: `pytest tests/test_phase1_auth_catalog.py -v`.
+- Commit message: `feat(phase1): implement secure auth, rbac, product catalog with brand variants, and billing plans`.
+
+---
+
+## 6. Acceptance Criteria & Gravitas Verification Contract (Phase 1)
 
 - [ ] **AC-1.1:** Attempting to register with password `Pass123` fails with HTTP 422 (must be $>8$ chars, uppercase, lowercase, special char).
 - [ ] **AC-1.2:** Admin can create a staff member, but a staff member attempting to create another staff member gets HTTP 403 Forbidden.
