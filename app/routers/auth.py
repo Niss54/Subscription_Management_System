@@ -44,8 +44,8 @@ def register(payload: UserRegister, db: Session = Depends(get_db)):
     return {
         "access_token": token,
         "token_type": "bearer",
-        "user_id": str(user.id),
         "id": str(user.id),
+        "user_id": str(user.id),
         "email": user.email,
         "role": user.role.value,
         "full_name": user.full_name
@@ -68,8 +68,8 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
     return {
         "access_token": token,
         "token_type": "bearer",
-        "user_id": str(user.id),
         "id": str(user.id),
+        "user_id": str(user.id),
         "email": user.email,
         "role": user.role.value,
         "full_name": user.full_name
@@ -102,7 +102,6 @@ def forgot_password(payload: ForgotPasswordRequest, db: Session = Depends(get_db
     """PDF Rule: Password reset link should arrive at registered email."""
     user = db.query(User).filter(User.email == payload.email).first()
     if not user:
-        # Prevent user enumeration
         return {"message": "If this email is registered, a password reset link has been dispatched."}
 
     raw_token = secrets.token_urlsafe(32)

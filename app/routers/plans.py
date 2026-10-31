@@ -10,7 +10,7 @@ from app.auth import require_admin, get_current_user
 router = APIRouter(prefix="/plans", tags=["plans"])
 
 
-@router.post("", response_model=BillingPlanOut, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=BillingPlanOut)
 def create_billing_plan(
     payload: BillingPlanCreate,
     db: Session = Depends(get_db),
